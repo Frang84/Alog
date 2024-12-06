@@ -9,7 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   let getData2 = () => {
-    fetch('http://10.0.2.2:8000/get/')
+    fetch('http://10.0.2.2:8000/')
     .then(response => response.json())
     .then(data => console.log(data))
     .catch(error => console.error('Error:', error));
