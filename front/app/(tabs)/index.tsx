@@ -17,7 +17,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <Button title="Kliknij mnie!" onPress={getData2} color="#841584" />
+        <Button title="Kliknij mnie!!!" onPress={getData2} color="#841584" />
       </View>
     </SafeAreaProvider>
 
