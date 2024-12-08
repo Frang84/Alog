@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Button, View } from 'react-native';
+import { Image, StyleSheet, Platform, Button, View,  } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -19,6 +19,7 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <Button title="Kliknij mnie!!!" onPress={getData2} color="#841584" />
       </View>
+      
     </SafeAreaProvider>
 
 

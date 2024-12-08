@@ -4,11 +4,8 @@ import { Link } from 'expo-router';
 export default function DetailsScreen() {
     return (
       <View style={styles.container}>
-        <Text>Add screen</Text>
+        <Text>Info screen</Text>
         <Link href="/">back to home</Link>
-        <Link href="/explore">go to explore</Link>
-        <Link href="/(test)/details">go to details</Link>
-        <Link href="/(test)/info">go to info</Link>
       </View>
     );
   }
