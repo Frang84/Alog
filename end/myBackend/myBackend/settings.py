@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
-    'authJWT',
+    
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'authJWT',
     
 ]
 
@@ -148,3 +149,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.100', '10.0.2.2', '*']
+
+# AUTH_USER_MODEL = 'authJWT.User'
