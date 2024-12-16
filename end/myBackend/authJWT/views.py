@@ -58,3 +58,17 @@ class LoginView(APIView):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }, status=status.HTTP_200_OK)
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            # Pobierz refresh token z danych żądania
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            # Dodaj token do blacklisty
+            token.blacklist()
+            return Response({"message": "Token successfully blacklisted"}, status=200)
+        except Exception as e:
+            return Response({"error": "Invalid token"}, status=400)
