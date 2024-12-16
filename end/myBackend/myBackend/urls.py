@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('auth/', include('authJWT.urls')),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),    
     # path('', include('authJWT.urls')), # include your app urls.py here

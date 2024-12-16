@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'authJWT',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     
 ]
@@ -67,6 +68,10 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
+    "ROTATE_REFRESH_TOKENS": True,
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "BLACKLIST_AFTER_ROTATION": True,  # Blacklistuj stary token po rotacji
+    "TOKEN_BLACKLIST_ENABLED": True,  # Włącz blacklistowanie
 }
 
 MIDDLEWARE = [
