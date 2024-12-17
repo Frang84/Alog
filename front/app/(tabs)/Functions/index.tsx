@@ -5,11 +5,8 @@ const  LoginPage = () =>{
     return(
         <View style={styles.container}>
             <Text>
-                Login Page
-            </Text>
-             <Link href="/Functions/add">login</Link> 
-           
-            
+                Add Page
+            </Text>     
         </View>
     )
 }
