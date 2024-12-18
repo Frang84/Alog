@@ -34,16 +34,17 @@ const  LoginPage = () =>{
       if (response.ok) {
         // Obsłuż odpowiedź w przypadku sukcesu
         console.log("Sukces", `Zalogowano użytkownika:`,data);
-        router.push('./(tabs)/Functions', )
+        setPassword("");
+        router.push('./(tabs)/Functions' );
       } else {
         // Obsłuż błędy (np. walidacja po stronie serwera)
-        console.log("Błąd", data.message || "Wystąpił błąd");
+        console.log("Error:", data.detail || "Error unknown");
         
       }
     } catch (error) {
       // Obsłuż błędy (np. brak połączenia z serwerem)
-      console.error("Wystąpił błąd:", error);
-      console.log("Błąd", "Nie można połączyć się z serwerem");
+      console.error("Error occured:", error);
+      console.log("Error", "Unable to connect to the server");
     }
   }
   const handleSubmit = () =>{
