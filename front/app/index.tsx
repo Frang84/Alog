@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, StatusBar, SafeAreaView, TextInput, Button, KeyboardAvoidingView } from "react-native"
 import { useState } from "react"
-import {Link} from "expo-router"
+import {Link, router} from "expo-router"
 
 
 const  LoginPage = () =>{
@@ -15,13 +15,45 @@ const  LoginPage = () =>{
     setError(errors);
     return Object.keys(errors).length === 0;
   }
+  const sendLoginRequest = async () => {
+    const url = 'http://10.0.2.2:8000/auth/login'
+    const payload = {
+      email: email,
+      password: password,
+    };
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Obsłuż odpowiedź w przypadku sukcesu
+        console.log("Sukces", `Zalogowano użytkownika:`,data);
+        router.push('./(tabs)/Functions', )
+      } else {
+        // Obsłuż błędy (np. walidacja po stronie serwera)
+        console.log("Błąd", data.message || "Wystąpił błąd");
+        
+      }
+    } catch (error) {
+      // Obsłuż błędy (np. brak połączenia z serwerem)
+      console.error("Wystąpił błąd:", error);
+      console.log("Błąd", "Nie można połączyć się z serwerem");
+    }
+  }
   const handleSubmit = () =>{
     if(validateForm()){
       console.log("Submitted", email, password);
       setEmail("");
       setPassword("");
       setError({});
-      
+      sendLoginRequest();
+      // 
     }
   }
 
