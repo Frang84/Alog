@@ -4,7 +4,7 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{
-        headerShown: false
+        headerTitle: "Login"
       }}/>
       <Stack.Screen name="register" />
       <Stack.Screen name="(tabs)/Functions" options={{
