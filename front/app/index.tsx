@@ -54,7 +54,6 @@ const  LoginPage = () =>{
       setPassword("");
       setError({});
       sendLoginRequest();
-      // 
     }
   }
 
@@ -80,6 +79,8 @@ const  LoginPage = () =>{
             value={password} 
             onChangeText={setPassword}/>
             <Button title="Login" onPress={handleSubmit}></Button>
+            <Text>Don't have account?</Text>
+            <Button title="Register" onPress={() => router.push('/register')}></Button>
         </SafeAreaView>
       </KeyboardAvoidingView>
     )  
