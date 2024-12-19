@@ -35,7 +35,7 @@ const  LoginPage = () =>{
         // Obsłuż odpowiedź w przypadku sukcesu
         console.log("Sukces", `Zalogowano użytkownika:`,data);
         setPassword("");
-        router.push('./(tabs)/Functions' );
+        router.push('./(tabs)/Functions');
       } else {
         // Obsłuż błędy (np. walidacja po stronie serwera)
         console.log("Error:", data.detail || "Error unknown");
