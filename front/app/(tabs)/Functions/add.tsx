@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet } from "react-native"
 import {Link} from "expo-router"
 
-const  LoginPage = () =>{
+const  AddPage = () =>{
     return(
         <View style={styles.container}>
             <Text>
@@ -12,7 +12,7 @@ const  LoginPage = () =>{
         </View>
     )
 }
-export default LoginPage;
+export default AddPage;
 
 const styles = StyleSheet.create({
   container: {

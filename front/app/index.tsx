@@ -1,12 +1,14 @@
 import { Text, View, StyleSheet, StatusBar, SafeAreaView, TextInput, Button, KeyboardAvoidingView } from "react-native"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {Link, router} from "expo-router"
-
+import * as SecureStore from 'expo-secure-store';
 
 const  LoginPage = () =>{
   const [email, setEmail] = useState("") 
   const [password, setPassword] = useState("") 
   const [errors, setError] = useState({})
+  const [autheniticated, setAutheniticated] = useState(false) 
+  
 
   const validateForm = () =>{
     let errors = {};
@@ -33,9 +35,18 @@ const  LoginPage = () =>{
       const data = await response.json();
       if (response.ok) {
         // Obsłuż odpowiedź w przypadku sukcesu
-        console.log("Sukces", `Zalogowano użytkownika:`,data);
+        console.log("Success", `user loggedin:`,data);
+        console.log("Success", `user loggedin:`,data.access);
+        const now = new Date();
+        const twoWeeks = 14;
+        const obj = {
+          token: data,
+          date: new Date(now.getTime() + 1000 * 60 * 60 * 24 * twoWeeks), 
+        }
+        SecureStore.setItemAsync("DateToken", JSON.stringify(obj));
+        setAutheniticated(true);
         setPassword("");
-        router.push('./(tabs)/Functions');
+        //router.push('./(tabs)/Functions');
       } else {
         // Obsłuż błędy (np. walidacja po stronie serwera)
         console.log("Error:", data.detail || "Error unknown");
@@ -56,6 +67,26 @@ const  LoginPage = () =>{
       sendLoginRequest();
     }
   }
+  const isAuthenticated = () => {
+    SecureStore.getItemAsync("DateToken").then((value) => {
+      if(value){
+        const obj = JSON.parse(value);
+        const now = new Date();
+        if(now < new Date(obj.date)){
+          return true;
+        }else{
+          return false
+        }
+      }
+    });
+  }
+  useEffect(() => {isAuthenticated()},[]);
+  //isAuthenticated();
+  console.log('in isAuthenticated');
+  if(autheniticated){
+    router.push('./(tabs)/Functions');
+  }
+
 
     return(
       <KeyboardAvoidingView behavior="padding" style={styles.container}>

@@ -1,18 +1,23 @@
-import { Text, View, StyleSheet } from "react-native"
-import {Link} from "expo-router"
+import { Text, View, StyleSheet, Button } from "react-native"
+import {Link, router} from "expo-router"
+import * as  SecureStore  from "expo-secure-store"
 
-const  LoginPage = () =>{
+
+const  SettingsPage = () =>{
+    const logOut = () =>{
+      SecureStore.deleteItemAsync("DateToken");
+      
+    }
     return(
         <View style={styles.container}>
             <Text>
                 Settings Page
             </Text>
-           
-            
+            <Button title="logout" onPress={logOut}></Button>
         </View>
     )
 }
-export default LoginPage;
+export default SettingsPage;
 
 const styles = StyleSheet.create({
   container: {
