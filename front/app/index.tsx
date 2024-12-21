@@ -46,7 +46,7 @@ const  LoginPage = () =>{
         SecureStore.setItemAsync("DateToken", JSON.stringify(obj));
         setAutheniticated(true);
         setPassword("");
-        //router.push('./(tabs)/Functions');
+        
       } else {
         // Obsłuż błędy (np. walidacja po stronie serwera)
         console.log("Error:", data.detail || "Error unknown");
@@ -73,19 +73,24 @@ const  LoginPage = () =>{
         const obj = JSON.parse(value);
         const now = new Date();
         if(now < new Date(obj.date)){
-          return true;
-        }else{
-          return false
+          setAutheniticated(true);
         }
+        else{
+          SecureStore.deleteItemAsync("DateToken");
+          setAutheniticated(false);
       }
+      console.log("in isAuthenticated");
+    }
     });
   }
   useEffect(() => {isAuthenticated()},[]);
-  //isAuthenticated();
-  console.log('in isAuthenticated');
-  if(autheniticated){
-    router.push('./(tabs)/Functions');
-  }
+  
+
+  useEffect(() => {
+    if (autheniticated) {
+        router.push('./(tabs)/Functions');
+    }
+}, [autheniticated]);
 
 
     return(
