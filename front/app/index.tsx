@@ -45,6 +45,7 @@ const  LoginPage = () =>{
         }
         SecureStore.setItemAsync("DateToken", JSON.stringify(obj));
         setAutheniticated(true);
+        console.log("authenticated", autheniticated);
         setPassword("");
         
       } else {
@@ -68,6 +69,7 @@ const  LoginPage = () =>{
     }
   }
   const isAuthenticated = () => {
+    console.log("in isAuthenticated,", autheniticated);
     SecureStore.getItemAsync("DateToken").then((value) => {
       if(value){
         const obj = JSON.parse(value);
@@ -79,7 +81,7 @@ const  LoginPage = () =>{
           SecureStore.deleteItemAsync("DateToken");
           setAutheniticated(false);
       }
-      console.log("in isAuthenticated");
+      
     }
     });
   }
@@ -87,7 +89,9 @@ const  LoginPage = () =>{
   
 
   useEffect(() => {
+    console.log('in useEffect', autheniticated);
     if (autheniticated) {
+        console.log("User is authenticated");
         router.push('./(tabs)/Functions');
     }
 }, [autheniticated]);
@@ -117,6 +121,7 @@ const  LoginPage = () =>{
             <Button title="Login" onPress={handleSubmit}></Button>
             <Text>Don't have account?</Text>
             <Button title="Register" onPress={() => router.push('/register')}></Button>
+            <Button title="Home" onPress={() => router.push('/home')}></Button>
         </SafeAreaView>
       </KeyboardAvoidingView>
     )  

@@ -22,12 +22,16 @@ class RegisterView(APIView):
     def post(self, request):
 
         # Tworzenie użytkownika na podstawie danych z żądania
-        data = request.data
+        
         try:
+            print(request.data)
+            print(request.data.get('username'))
+            print(request.data.get('email'))
+            print(make_password(request.data.get('password')))
             user = User.objects.create(
-                username=data['username'],
-                email=data['email'],
-                password=make_password(data['password'])  # Hasło musi być hashowane
+                username = request.data.get('username'),
+                email = request.data.get('email'),
+                password = make_password(request.data.get('password'))  # Hasło musi być hashowane
             )
             user.save()
             return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)

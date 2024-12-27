@@ -6,8 +6,8 @@ import * as  SecureStore  from "expo-secure-store"
 const  SettingsPage = () =>{
     const logOut = () =>{
       SecureStore.deleteItemAsync("DateToken");
-      //router.dismissAll();
-      router.dismissTo("../../");
+      router.dismissAll();
+      //router.dismissTo("../../");
       console.log("logout")
     }
     return(

@@ -1,14 +1,17 @@
 import { Text, View, StyleSheet, StatusBar, SafeAreaView, TextInput, Button, KeyboardAvoidingView, AppRegistry } from "react-native"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {Link, router} from "expo-router"
 import {sendRequest} from "./functions/apiPostRequest"
+import * as SecureStore from 'expo-secure-store';
+
 
 const  RegisterPage = () =>{
   const [email, setEmail] = useState("") ;
   const [password, setPassword] = useState("") ;
   const [username, setUsername] = useState("");
   const [errors, setError] = useState({});
-  
+  const [autheniticated, setAutheniticated] = useState(false);
+   
 
   const validateForm = () =>{
     let errors = {};
@@ -26,13 +29,32 @@ const  RegisterPage = () =>{
       password: password,
     };
     try{
-      const response = await sendRequest(url, payload);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
       console.log(response);
       setPassword("");
-      router.push('./(tabs)/Functions' );
+      
+      
+      const data = await response.json();
+      if(response.ok){
+        const now = new Date();
+        const twoWeeks = 14;
+        const obj = {
+          token: data,
+          date: new Date(now.getTime() + 1000 * 60 * 60 * 24 * twoWeeks), 
+        }
+        SecureStore.setItemAsync("DateToken", JSON.stringify(obj));
+        setAutheniticated(true);
+      }
     }catch(error){
       console.log(error);
     }
+    
   }
 
   const sendRegisterRequest = async () => {
@@ -43,8 +65,9 @@ const  RegisterPage = () =>{
       password: password,
     };
     try{
-      const response = await sendRequest(url, payload);
-      console.log(response);
+      console.log("sending request");
+      const data = await sendRequest(url, payload);
+      console.log(data);
       loginAfterRegister()
     }catch(error){
       console.log(error);
@@ -59,6 +82,10 @@ const  RegisterPage = () =>{
       sendRegisterRequest();
     }
   }
+  useEffect(() => {
+    if(autheniticated){
+      router.push('./(tabs)/Functions' );
+  }}, [autheniticated]);
 
     return(
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
