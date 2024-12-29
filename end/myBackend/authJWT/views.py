@@ -24,10 +24,7 @@ class RegisterView(APIView):
         # Tworzenie użytkownika na podstawie danych z żądania
         
         try:
-            print(request.data)
-            print(request.data.get('username'))
-            print(request.data.get('email'))
-            print(make_password(request.data.get('password')))
+
             user = User.objects.create(
                 username = request.data.get('username'),
                 email = request.data.get('email'),
