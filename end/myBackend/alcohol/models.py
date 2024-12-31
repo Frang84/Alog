@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 class Alcohol(models.Model):
     name = models.CharField(max_length=200)
     typeName = models.CharField(max_length=100)
@@ -14,6 +14,7 @@ class Alcohol(models.Model):
 
 
 class Event(models.Model):
+    userId = models.ForeignKey(User, related_name='events', on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=100)
     date = models.DateField()
     alcohol = models.ForeignKey(Alcohol, related_name='events', on_delete=models.CASCADE)
