@@ -121,7 +121,7 @@ const  LoginPage = () =>{
             <Button title="Login" onPress={handleSubmit}></Button>
             <Text>Don't have account?</Text>
             <Button title="Register" onPress={() => router.push('/register')}></Button>
-            <Button title="Home" onPress={() => router.push('/home')}></Button>
+            
         </SafeAreaView>
       </KeyboardAvoidingView>
     )  

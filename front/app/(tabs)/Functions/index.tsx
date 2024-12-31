@@ -5,7 +5,7 @@ const  LoginPage = () =>{
     return(
         <View style={styles.container}>
             <Text>
-                Add Page
+                index Page
             </Text>     
         </View>
     )

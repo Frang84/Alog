@@ -50,7 +50,7 @@ class EventView(APIView):
             user1 = User.objects.filter(id=user.id).first()
             event = Event.objects.create(
                 userId = user1,
-                eventName = request.data.get('name'),
+                eventName = request.data.get('eventName'),
                 date = datetime.datetime.now(),
                 alcohol = alcohol
             )
