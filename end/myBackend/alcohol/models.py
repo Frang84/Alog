@@ -15,7 +15,7 @@ class Alcohol(models.Model):
 
 class Event(models.Model):
     userId = models.ForeignKey(User, related_name='events', on_delete=models.CASCADE, default=1)
-    name = models.CharField(max_length=100)
+    eventName = models.CharField(max_length=100)
     date = models.DateField()
     alcohol = models.ForeignKey(Alcohol, related_name='events', on_delete=models.CASCADE)
     def __str__(self):

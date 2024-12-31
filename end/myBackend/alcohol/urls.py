@@ -1,5 +1,5 @@
 from django.urls import path 
-from .views import getData, UserProfileView
+from .views import getData, UserProfileView, EventView
 
 urlpatterns = [
     #path('', views.getData),
