@@ -35,11 +35,12 @@ class EventView(APIView):
     def post(self, request):
         # Używamy request.user, aby uzyskać informacje o zalogowanym użytkowniku
         try:
+            print(request.data)
             alcohol = Alcohol.objects.filter(name=request.data.get('name')).first()
             if not alcohol:
                 alcohol = Alcohol.objects.create(
                     name = request.data.get('name'),
-                    typeName = request.data.get('typeName'),
+                    alcoholType= request.data.get('alcoholType'),
                     price = request.data.get('price'),
                     volume = request.data.get('volume'),
                     percentage = request.data.get('percentage'),

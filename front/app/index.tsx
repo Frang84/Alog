@@ -36,7 +36,7 @@ const  LoginPage = () =>{
       if (response.ok) {
         // Obsłuż odpowiedź w przypadku sukcesu
         console.log("Success", `user loggedin:`,data);
-        console.log("Success", `user loggedin:`,data.access);
+        //console.log("Success", `user loggedin:`,data.access);
         const now = new Date();
         const twoWeeks = 14;
         const obj = {
@@ -44,6 +44,7 @@ const  LoginPage = () =>{
           date: new Date(now.getTime() + 1000 * 60 * 60 * 24 * twoWeeks), 
         }
         SecureStore.setItemAsync("DateToken", JSON.stringify(obj));
+        console.log(SecureStore.getItemAsync("DateToken"));
         setAutheniticated(true);
         console.log("authenticated", autheniticated);
         setPassword("");

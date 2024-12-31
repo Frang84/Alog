@@ -1,15 +1,125 @@
-import { Text, View, StyleSheet,TextInput, SafeAreaView, KeyboardAvoidingView } from "react-native"
+import { Text, View, StyleSheet,TextInput, SafeAreaView, KeyboardAvoidingView, Button, Keyboard } from "react-native"
+import { useState } from "react"
 import {Link} from "expo-router"
-
+import RNPickerSelect from 'react-native-picker-select';
+import { apiPostRequest } from "@/app/functions/apiPostRequest";
+import * as SecureStore from 'expo-secure-store';
 const  AddPage = () =>{
+  const [alcoholType, setalcoholType] = useState("") 
+  const [alcoholName, setalcoholName] = useState("")
+  const [price, setPrice] = useState(0)
+  const [volume, setVolume] = useState(0)
+  const [percentage, setPercentage] = useState(0)
+  const [eventName, setEventName] = useState("")
+  const [brand, setBrand] = useState("")
+  const handleSubmit = async () => {
+    console.log(alcoholType, alcoholName, price, volume, percentage, eventName)
+    const url = 'http://10.0.2.2:8000/add'
+    const payload = {
+      name: alcoholName,
+      alcoholType: alcoholType,
+      
+      price: price,
+      volume: volume,
+      percentage: percentage,
+      eventName: eventName
+    };
+    const dateToken = await SecureStore.getItemAsync("DateToken");
+    let accessToken = '';
+    if (dateToken) {
+      accessToken = JSON.parse(dateToken).token.access;
+    } else {
+      console.error("DateToken is null");
+      return;
+    }
+    try {
+      const data = await apiPostRequest(url, payload, accessToken);
+      console.log("Success", `user loggedin:`,data);
+      setalcoholType("")
+      setalcoholName("")
+      setPrice(0)
+      setVolume(0)
+      setPercentage(0)
+      setEventName("")
+    } catch (error) {
+      console.error("Error occured:", error);
+      console.log("Error", "Unable to connect to the server");
+    }
+  //   try {
+  //     const response = await fetch(url, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": 'Bearer ' + SecureStore.getItemAsync("DateToken"),
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       setalcoholType("")
+  //       setalcoholName("")
+  //       setPrice(0)
+  //       setVolume(0)
+  //       setPercentage(0)
+  //       setEventName("")
+  //     } else {
+  //       console.log("Error:", data.detail || "Error unknown");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error occured:", error);
+  //     console.log("Error", "Unable to connect to the server");
+  // }
+}
     return(
         <View style={styles.container}>
-            <Text>
-                Add Page
-            </Text>
-            <Text>Alcohol name</Text>
-            <TextInput style={styles.input}></TextInput>
-           
+        <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
+          onValueChange={(value) => 
+            {
+              console.log(value)
+              setalcoholType(value)
+            }}
+          placeholder={{ label: 'Alcohol Type', value: null }}
+          items={[
+          { label: 'Bear', value: 'Bear' },
+          { label: 'Vodka', value: 'Vodka' },
+          { label: 'Wine', value: 'Wine' },
+        ]}
+          />
+          <Text>Alcohol name</Text>
+          <TextInput style={styles.input} onChangeText={setalcoholName}></TextInput>
+
+
+
+          <Text>Price</Text>
+          <TextInput 
+          style={styles.input} 
+          onChangeText={(text) => setPrice(Number(text))
+          }></TextInput>
+
+          <Text>Volume</Text>
+          <TextInput style={styles.input} onChangeText={(text) => setVolume(Number(text))}></TextInput>
+
+          <Text>Percantage</Text>
+          <TextInput style={styles.input} onChangeText={(text) => setPercentage(Number(text))}></TextInput>
+
+          <Text>Brand</Text>
+          <TextInput style={styles.input} onChangeText={setBrand}></TextInput>
+
+          <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
+          onValueChange={(value) => 
+            {
+              console.log(value)
+              setEventName(value)
+            }}
+          placeholder={{ label: 'Event Type', value: null }}
+          items={[
+          { label: 'Alone', value: 'Alone' },
+          { label: 'Party', value: 'Party' },
+          { label: 'Wedding', value: 'Wedding' },
+        ]}
+          />
+
+          <Button title="Add" onPress={handleSubmit}></Button>
             
         </View>
     )
@@ -28,6 +138,14 @@ const styles = StyleSheet.create({
     width: 160,
     margin: 12,
     padding: 10,
-    borderWidth: 1
+    borderWidth: 1,
   },
+  inputAndroid: {
+    fontSize: 16,
+    padding: 10,
+    borderWidth: 1,
+    width: 160,
+    color: 'black',
+     
+  }
 });
