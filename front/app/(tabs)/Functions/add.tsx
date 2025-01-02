@@ -10,7 +10,7 @@ const  AddPage = () =>{
   const [price, setPrice] = useState(0)
   const [volume, setVolume] = useState(0)
   const [percentage, setPercentage] = useState(0)
-  const [eventName, setEventName] = useState("")
+  const [eventName, setEventName] = useState("Party")
   const [brand, setBrand] = useState("")
 
   const autoCompleteAlcohol = (alcoholTypeVal: string) => {
@@ -60,12 +60,7 @@ const  AddPage = () =>{
     try {
       const data = await apiPostRequest(url, payload, accessToken);
       console.log("Success", `user loggedin:`,data);
-      setalcoholType("")
-      setalcoholName("")
-      setPrice(0)
-      setVolume(0)
-      setPercentage(0)
-      setEventName("")
+      
     } catch (error) {
       console.error("Error occured:", error);
       console.log("Error", "Unable to connect to the server");
