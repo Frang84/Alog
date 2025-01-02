@@ -46,7 +46,8 @@ const  AddPage = () =>{
       price: price,
       volume: volume,
       percentage: percentage,
-      eventName: eventName
+      eventName: eventName,
+      brand: brand
     };
     const dateToken = await SecureStore.getItemAsync("DateToken");
     let accessToken = '';
@@ -94,7 +95,7 @@ const  AddPage = () =>{
 
 
 
-          <Text>Price</Text>
+          <Text>Price (PLN)</Text>
           <TextInput 
           style={styles.input} 
           onChangeText={(text) => setPrice(Number(text))}
@@ -102,7 +103,7 @@ const  AddPage = () =>{
           ></TextInput>
 
 
-            <Text>Volume</Text>
+            <Text>Volume (ml)</Text>
             <TextInput 
             style={styles.input} 
             value={volume.toString()} 
@@ -110,7 +111,7 @@ const  AddPage = () =>{
             placeholder="Volume"
             />
 
-          <Text>Percantage</Text>
+          <Text>Percantage %</Text>
           <TextInput style={styles.input}
             onChangeText={(text) => setPercentage(Number(text))}
             value={percentage.toString()}
