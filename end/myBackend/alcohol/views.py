@@ -38,6 +38,7 @@ class EventView(APIView):
             print(request.data)
             alcohol = Alcohol.objects.filter(name=request.data.get('name')).first()
             if not alcohol:
+                print('Creating new alcohol')
                 alcohol = Alcohol.objects.create(
                     name = request.data.get('name'),
                     alcoholType= request.data.get('alcoholType'),

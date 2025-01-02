@@ -12,13 +12,37 @@ const  AddPage = () =>{
   const [percentage, setPercentage] = useState(0)
   const [eventName, setEventName] = useState("")
   const [brand, setBrand] = useState("")
+
+  const autoCompleteAlcohol = (alcoholTypeVal: string) => {
+    if(alcoholTypeVal === "Bear"){
+      setalcoholName("default bear")
+      setPrice(15)
+      setVolume(500)
+      setPercentage(5)
+      setBrand("default bear")
+  }
+  if(alcoholTypeVal === "Vodka"){
+    setalcoholName("default vodka")
+    setPrice(10)
+    setVolume(30)
+    setPercentage(40)
+    setBrand("default vodka")
+  }
+  if(alcoholTypeVal === "Wine"){
+    setalcoholName("default wine")
+    setPrice(26)
+    setVolume(150)
+    setPercentage(12)
+    setBrand("default wine")
+  }
+}
+
   const handleSubmit = async () => {
     console.log(alcoholType, alcoholName, price, volume, percentage, eventName)
     const url = 'http://10.0.2.2:8000/add'
     const payload = {
       name: alcoholName,
       alcoholType: alcoholType,
-      
       price: price,
       volume: volume,
       percentage: percentage,
@@ -45,30 +69,6 @@ const  AddPage = () =>{
       console.error("Error occured:", error);
       console.log("Error", "Unable to connect to the server");
     }
-  //   try {
-  //     const response = await fetch(url, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": 'Bearer ' + SecureStore.getItemAsync("DateToken"),
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       setalcoholType("")
-  //       setalcoholName("")
-  //       setPrice(0)
-  //       setVolume(0)
-  //       setPercentage(0)
-  //       setEventName("")
-  //     } else {
-  //       console.log("Error:", data.detail || "Error unknown");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error occured:", error);
-  //     console.log("Error", "Unable to connect to the server");
-  // }
 }
     return(
         <View style={styles.container}>
@@ -77,6 +77,7 @@ const  AddPage = () =>{
             {
               console.log(value)
               setalcoholType(value)
+              autoCompleteAlcohol(value)
             }}
           placeholder={{ label: 'Alcohol Type', value: null }}
           items={[
@@ -86,24 +87,40 @@ const  AddPage = () =>{
         ]}
           />
           <Text>Alcohol name</Text>
-          <TextInput style={styles.input} onChangeText={setalcoholName}></TextInput>
+          <TextInput style={styles.input} 
+          onChangeText={setalcoholName}
+          value={alcoholName.toString()}
+          ></TextInput>
 
 
 
           <Text>Price</Text>
           <TextInput 
           style={styles.input} 
-          onChangeText={(text) => setPrice(Number(text))
-          }></TextInput>
+          onChangeText={(text) => setPrice(Number(text))}
+          value={price.toString()}
+          ></TextInput>
 
-          <Text>Volume</Text>
-          <TextInput style={styles.input} onChangeText={(text) => setVolume(Number(text))}></TextInput>
+
+            <Text>Volume</Text>
+            <TextInput 
+            style={styles.input} 
+            value={volume.toString()} 
+            onChangeText={(text) => setVolume(Number(text))} 
+            placeholder="Volume"
+            />
 
           <Text>Percantage</Text>
-          <TextInput style={styles.input} onChangeText={(text) => setPercentage(Number(text))}></TextInput>
+          <TextInput style={styles.input}
+            onChangeText={(text) => setPercentage(Number(text))}
+            value={percentage.toString()}
+          ></TextInput>
 
           <Text>Brand</Text>
-          <TextInput style={styles.input} onChangeText={setBrand}></TextInput>
+          <TextInput style={styles.input}
+           onChangeText={setBrand}
+            value={brand.toString()}
+           ></TextInput>
 
           <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
           onValueChange={(value) => 
@@ -111,10 +128,10 @@ const  AddPage = () =>{
               console.log(value)
               setEventName(value)
             }}
-          placeholder={{ label: 'Event Type', value: null }}
+          placeholder={{ label: 'Party', value: 'Party' }}
+          
           items={[
           { label: 'Alone', value: 'Alone' },
-          { label: 'Party', value: 'Party' },
           { label: 'Wedding', value: 'Wedding' },
         ]}
           />
