@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 class Alcohol(models.Model):
     name = models.CharField(max_length=200)
-    alcoholType = models.CharField(max_length=100)
+    alcoholType = models.CharField(max_length=100)#uzyj choice
     price = models.FloatField()
     volume = models.FloatField()
     percentage = models.FloatField()

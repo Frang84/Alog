@@ -1,8 +1,15 @@
 from django.urls import path 
-from .views import getData, UserProfileView, EventView
+#from  import getData, UserProfileView, EventView
+
+
+from .viewsDir import viewsEvent
+from .viewsDir import viewsStats
+
+
 
 urlpatterns = [
     #path('', views.getData),
-    path('details', UserProfileView.as_view()),
-    path('add', EventView.as_view())
+    path('details', viewsEvent.UserProfileView.as_view()),
+    path('add', viewsEvent.EventView.as_view()),
+    path('stats', viewsStats.StatsView.as_view())
 ]

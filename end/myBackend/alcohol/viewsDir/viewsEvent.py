@@ -3,9 +3,9 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
-from .serializers import AlcoholSerializer, EventSerializer
+
 from rest_framework import status
-from .models import Alcohol, Event
+from alcohol.models import Alcohol, Event
 import datetime
 
 
@@ -14,6 +14,8 @@ import datetime
 def getData(request): 
     person = {'name': 'Test', 'age': 12345}
     return Response(person)
+
+
 
 
 class UserProfileView(APIView):
@@ -59,4 +61,6 @@ class EventView(APIView):
             return Response({'message': 'Alcohol created successfully'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
     
