@@ -16,29 +16,31 @@ class StatsView(APIView):
         
         startDate = self.interDate(str(self.getDate(request.data.get('startDate'))))
         endDate =self.interDate(str(self.getDate(request.data.get('endDate'))))
-
-        alcoholPriceStats = self.totalAlcoholPrice(request.user.id, startDate, endDate)
+        print(startDate)
+        print(endDate)
+        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, "STRFTIME('%m', date)", startDate, endDate)
         preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
         avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)
         preferedEventTypeStats = self.preferedEventType(request.user.id, startDate, endDate)
         
         return Response(
             {
-                "alcoholPriceStats": alcoholPriceStats,
+                "alcoholPriceStats": totalAlcoholPriceStats,
                 "preferAlcoTypeStats": preferAlcoTypeStats,
                 "avgAlcoholPercentageStats": avgAlcoholPercentageStats,
                 "preferedEventTypeStats": preferedEventTypeStats
             }
         )
 
-    def totalAlcoholPrice(self, userId, startDate, endDate): 
+    def totalAlcoholPrice(self, userId, groupBy, startDate, endDate): 
         '''funckaj wylicza calkowity alkohol i cene dla kazdego dnia w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
-            cursor.execute(f"""SELECT  date, SUM(price) as totalPrice, SUM(volume * percentage/100) as totalAlcohol
+            cursor.execute(f"""
+            SELECT  {groupBy}, SUM(price) as totalPrice, SUM(volume * percentage/100) as totalAlcohol
             FROM alcohol_event 
             INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
             WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-            GROUP BY date
+            GROUP BY {groupBy}
             """)
             row = cursor.fetchall()
             return row
@@ -84,7 +86,8 @@ class StatsView(APIView):
 
     
     def interDate(self, date):
-        return date.translate('-')
+        
+        return date.replace('-', '')
  
         
         
