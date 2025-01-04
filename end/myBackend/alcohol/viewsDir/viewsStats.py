@@ -19,11 +19,15 @@ class StatsView(APIView):
 
         alcoholPriceStats = self.totalAlcoholPrice(request.user.id, startDate, endDate)
         preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
-        #print(alcoholPriceStats)
+        avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)
+        preferedEventTypeStats = self.preferedEventType(request.user.id, startDate, endDate)
+        
         return Response(
             {
                 "alcoholPriceStats": alcoholPriceStats,
-                "preferAlcoTypeStats": preferAlcoTypeStats
+                "preferAlcoTypeStats": preferAlcoTypeStats,
+                "avgAlcoholPercentageStats": avgAlcoholPercentageStats,
+                "preferedEventTypeStats": preferedEventTypeStats
             }
         )
 
@@ -41,11 +45,8 @@ class StatsView(APIView):
     def preferedAlcoType(self, userId, startDate, endDate): 
         '''oblicza jaki udzial procentowy po przeliczeniu na czysty spirytus ma dany typ alkocholu w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
-            cursor.execute(f"""SELECT alcoholType,  SUM(volume * percentage/100) / 
-                (SELECT SUM(volume * percentage/100) 
-                FROM alcohol_event 
-                INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-                WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}' )
+            cursor.execute(f"""
+            SELECT alcoholType,  SUM(volume * percentage/100) 
             as alcoTypePercentage
             FROM alcohol_event 
             INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
@@ -55,7 +56,33 @@ class StatsView(APIView):
             row = cursor.fetchall()
             return row
 
+    def preferedEventType(self, userId, startDate, endDate): 
+        '''oblicza jaki udzial procentowy po przeliczeniu na czysty spirytus ma dany typ alkocholu w podanym przedziale czasowym'''
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+            SELECT eventName,  SUM(volume * percentage/100) 
+            as alcoTypePercentage
+            FROM alcohol_event 
+            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            GROUP BY eventName
+            """)
+            row = cursor.fetchall()
+            return row
 
+    def avgAlcoholPercentage(self, userId, startDate, endDate):
+        '''oblicza sredni procent alkocholu wypitego w podanym przedziale czasowym'''
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+            SELECT AVG(percentage) as avgPercentage
+            FROM alcohol_event 
+            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            """)
+            row = cursor.fetchall()
+            return row
+
+    
     def interDate(self, date):
         return date.translate('-')
  
