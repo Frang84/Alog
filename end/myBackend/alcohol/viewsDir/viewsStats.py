@@ -14,25 +14,53 @@ class StatsView(APIView):
 
     def get(self, request): 
         
-        startDate = self.getDate(request.data.get('startDate'))
-        endDate = self.getDate(request.data.get('endDate'))
+        startDate = self.interDate(str(self.getDate(request.data.get('startDate'))))
+        endDate =self.interDate(str(self.getDate(request.data.get('endDate'))))
 
-        join = self.joinEventAlcohol(request.user.id)
-        print(join)
+        alcoholPriceStats = self.totalAlcoholPrice(request.user.id, startDate, endDate)
+        preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
+        #print(alcoholPriceStats)
         return Response(
             {
-                "events": join
+                "alcoholPriceStats": alcoholPriceStats,
+                "preferAlcoTypeStats": preferAlcoTypeStats
             }
         )
 
-    def joinEventAlcohol(self, userId): 
+    def totalAlcoholPrice(self, userId, startDate, endDate): 
+        '''funckaj wylicza calkowity alkohol i cene dla kazdego dnia w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
-            cursor.execute(f"""SELECT eventName, date, alcoholType, price, volume, percentage, brand
+            cursor.execute(f"""SELECT  date, SUM(price) as totalPrice, SUM(volume * percentage/100) as totalAlcohol
             FROM alcohol_event 
             INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId}""")
+            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            GROUP BY date
+            """)
             row = cursor.fetchall()
             return row
+    def preferedAlcoType(self, userId, startDate, endDate): 
+        '''oblicza jaki udzial procentowy po przeliczeniu na czysty spirytus ma dany typ alkocholu w podanym przedziale czasowym'''
+        with connection.cursor() as cursor:
+            cursor.execute(f"""SELECT alcoholType,  SUM(volume * percentage/100) / 
+                (SELECT SUM(volume * percentage/100) 
+                FROM alcohol_event 
+                INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+                WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}' )
+            as alcoTypePercentage
+            FROM alcohol_event 
+            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            GROUP BY alcoholType
+            """)
+            row = cursor.fetchall()
+            return row
+
+
+    def interDate(self, date):
+        return date.translate('-')
+ 
+        
+        
 
     def getDate(self, date):
         ymd = date.split('/')
