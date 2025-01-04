@@ -12,17 +12,25 @@ import json
 class StatsView(APIView):
     permission_classes = [IsAuthenticated]
     __groupByDict = {'Day' : "STRFTIME('%d', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
-    def get(self, request): 
+    def post(self, request): 
         
         startDate = str(self.getDate(request.data.get('startDate'))).replace('-', '')
-        endDate =str(self.getDate(request.data.get('endDate'))).replace('-', '')
+        endDate = str(self.getDate(request.data.get('endDate'))).replace('-', '')
         print(startDate)
         print(endDate)
         totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict['Day'], startDate, endDate)
+        totalAlcoholPriceStats = {row[0]: {'totalPrice': row[1], 'totalAlcohol': row[2]} for row in totalAlcoholPriceStats}
+
         preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
-        avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)
+        preferAlcoTypeStats = {row[0]:  row[1] for row in preferAlcoTypeStats}
+
+        avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)[0][0]
+
         preferedEventTypeStats = self.preferedEventType(request.user.id, startDate, endDate)
+        preferedEventTypeStats = {row[0]:  row[1] for row in preferedEventTypeStats}
+
         drinkingHoursStats = self.drinkingHours(request.user.id, startDate, endDate)
+        drinkingHoursStats = {row[0]:  row[1] for row in drinkingHoursStats}
         
         return Response(
             {
@@ -43,6 +51,7 @@ class StatsView(APIView):
             INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
             WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
             GROUP BY {groupBy}
+            ORDER BY {groupBy}
             """)
             row = cursor.fetchall()
             return row

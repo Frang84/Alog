@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, StatusBar, SafeAreaView, TextInput, Button, KeyboardAvoidingView, AppRegistry } from "react-native"
 import { useState, useEffect } from "react"
 import {Link, router} from "expo-router"
-import {sendRequest} from "./functions/apiPostRequest"
+import {sendRequest} from "./functions/apiRequest"
 import * as SecureStore from 'expo-secure-store';
 
 

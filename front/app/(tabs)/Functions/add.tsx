@@ -2,7 +2,7 @@ import { Text, View, StyleSheet,TextInput, SafeAreaView, KeyboardAvoidingView, B
 import { useState } from "react"
 import {Link} from "expo-router"
 import RNPickerSelect from 'react-native-picker-select';
-import { apiPostRequest } from "@/app/functions/apiPostRequest";
+import { apiPostRequest } from "@/app/functions/apiRequest";
 import * as SecureStore from 'expo-secure-store';
 const  AddPage = () =>{
   const [alcoholType, setalcoholType] = useState("") 
