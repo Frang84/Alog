@@ -11,24 +11,26 @@ import datetime
 import json 
 class StatsView(APIView):
     permission_classes = [IsAuthenticated]
-
+    __groupByDict = {'Day' : "STRFTIME('%d', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
     def get(self, request): 
         
         startDate = str(self.getDate(request.data.get('startDate'))).replace('-', '')
         endDate =str(self.getDate(request.data.get('endDate'))).replace('-', '')
         print(startDate)
         print(endDate)
-        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, "STRFTIME('%m', date)", startDate, endDate)
+        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict['Day'], startDate, endDate)
         preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
         avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)
         preferedEventTypeStats = self.preferedEventType(request.user.id, startDate, endDate)
+        drinkingHoursStats = self.drinkingHours(request.user.id, startDate, endDate)
         
         return Response(
             {
-                "alcoholPriceStats": totalAlcoholPriceStats,
+                "totalAlcoholPriceStats": totalAlcoholPriceStats,
                 "preferAlcoTypeStats": preferAlcoTypeStats,
                 "avgAlcoholPercentageStats": avgAlcoholPercentageStats,
-                "preferedEventTypeStats": preferedEventTypeStats
+                "preferedEventTypeStats": preferedEventTypeStats,
+                "drinkingHoursStats": drinkingHoursStats
             }
         )
 
@@ -84,6 +86,18 @@ class StatsView(APIView):
             row = cursor.fetchall()
             return row
 
+    def drinkingHours(self, userId, startDate, endDate):
+        '''oblicza sredni procent alkocholu wypitego w podanym przedziale czasowym'''
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+            SELECT STRFTIME('%H', date) as timeOfDrinking, SUM(volume * percentage/100) as totalAlcohol
+            FROM alcohol_event 
+            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            GROUP BY STRFTIME('%H', date) 
+            """)
+            row = cursor.fetchall()
+            return row
     
 
  

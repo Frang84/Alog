@@ -4,14 +4,15 @@ import { BarChart, LineChart, PieChart, PopulationPyramid, RadarChart } from "re
 
 
 const  StatsPage = () =>{
-  const data=[ {value:50, frontColor: "green"}, {value:80}, {value:90}, {value:70} ]
+  const data=[ {value:50, frontColor: "green"}, {value:80}, {value:90}, {value:70}, {value:70},{value:20},{value:30},{value:70, frontColor: "red"} ]
     return(
         <View style={styles.container}>
             <Text>
                 index Page
-                <BarChart data = {data} />
-                <PieChart data = {data} />
-            </Text>     
+
+            </Text>   
+            <BarChart data = {data} />
+            <PieChart data = {data} />  
         </View>
     )
 }
