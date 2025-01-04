@@ -16,19 +16,21 @@ class StatsView(APIView):
         
         startDate = self.getDate(request.data.get('startDate'))
         endDate = self.getDate(request.data.get('endDate'))
-        user = User.objects.filter(id=request.user.id).first()
-        events = Event.objects.all().filter(userId=user, date__gte=startDate, date__lte=endDate)
-        eventsList = list(events.values())
-        print(self.join())
+
+        join = self.joinEventAlcohol(request.user.id)
+        print(join)
         return Response(
             {
-                "events": eventsList
+                "events": join
             }
         )
 
-    def join(self): 
+    def joinEventAlcohol(self, userId): 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM alcohol_event INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id")
+            cursor.execute(f"""SELECT eventName, date, alcoholType, price, volume, percentage, brand
+            FROM alcohol_event 
+            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+            WHERE alcohol_event.userId_id = {userId}""")
             row = cursor.fetchall()
             return row
 
