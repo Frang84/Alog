@@ -14,8 +14,8 @@ class StatsView(APIView):
 
     def get(self, request): 
         
-        startDate = self.interDate(str(self.getDate(request.data.get('startDate'))))
-        endDate =self.interDate(str(self.getDate(request.data.get('endDate'))))
+        startDate = str(self.getDate(request.data.get('startDate'))).replace('-', '')
+        endDate =str(self.getDate(request.data.get('endDate'))).replace('-', '')
         print(startDate)
         print(endDate)
         totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, "STRFTIME('%m', date)", startDate, endDate)
@@ -85,9 +85,7 @@ class StatsView(APIView):
             return row
 
     
-    def interDate(self, date):
-        
-        return date.replace('-', '')
+
  
         
         
