@@ -15,25 +15,40 @@ const  StatsPage = () =>{
   const [startDate, setStartDate] = useState("29/12/2024")
   const [endDate, setEndDate] = useState("5/1/2025")
   const [preferAlcoTypeStats, setPreferAlcoTypeStats] = useState<barDataItem[]>([])
+  const [avgPercentage, setAvgPercentage] = useState<string>('0')
+  const [preferEventTypeStats, setPreferEventTypeStats] = useState<barDataItem[]>([])
 
-
-  const [stats, setStats] = useState([])
-  const data=[ {value:50, frontColor: "green", label:'bear'}, {value:80}, {value:90}, {value:70}, {value:70},{value:20},{value:30},{value:70, frontColor: "red"} ]
  
   useEffect(() => {
+    
     getStats();
-    setPreferAlcoTypeStats(processPreferAlcoholStats(stats));
+    
   }, []);
 
   const processPreferAlcoholStats = (data: {alcoholType: string, volume: number}[]) =>{
-    
-    console.log(stats);
-    const alcoholTypes = ['Vodka', 'Bear', 'Wine', 'Whiskey', 'Rum', 'Tequila', 'Gin', 'Brandy', 'Liqueur', 'Cider', 'Other'];
-    let barData = data.map((item) => ({
-      label: item.alcoholType,
-      value: item.volume,
-    }));
-    console.log("bar data", barData);
+    const alcoholTypes: string[] = ['Vodka', 'Bear', 'Wine', 'Whiskey', 'Rum', 'Tequila', 'Gin', 'Brandy', 'Liqueur', 'Cider', 'Other'];
+    let barData = alcoholTypes.map((label) => ({
+      label: label,
+      value: 0,
+    })); 
+    data.forEach((item) => {
+      const type = item.alcoholType;
+      const index = barData.findIndex((item) => item.label === type);
+      barData[index].value = item.volume;
+    });
+    return barData;
+  }
+  const processPreferAlcoholEventStats = (data: {eventType: string, volume: number}[]) =>{
+    const events: string[] = ['Party', 'Wedding', 'Birthday', 'Meeting with friend','Work meeting', 'Date', 'Alone', 'Other'];
+    let barData = events.map((label) => ({
+      label: label,
+      value: 0,
+    })); 
+    data.forEach((item) => {
+      const type = item.eventType;
+      const index = barData.findIndex((item) => item.label === type);
+      barData[index].value = item.volume;
+    });
     return barData;
   }
 
@@ -48,10 +63,11 @@ const  StatsPage = () =>{
       const accessToken = JSON.parse(dateToken).token.access;
       try {
         const data = await apiPostRequest(url, payload, accessToken);
-        console.log("Success", `data:`,data);
-        setStats(data["preferAlcoTypeStats"]);
-        // processPreferAlcoholStats(stats);
+        console.log("Success", `user loggedin:`, data);
+        setPreferAlcoTypeStats(processPreferAlcoholStats(data["preferAlcoTypeStats"]));
         
+        setAvgPercentage(data["avgAlcoholPercentageStats"].toString().substring(0,5));
+        setPreferEventTypeStats(processPreferAlcoholEventStats(data["preferedEventTypeStats"]));
       } catch (error) {
         console.error("Error occured", error);
       }
@@ -60,14 +76,18 @@ const  StatsPage = () =>{
 
   
   return(
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
           <Text>
               index Page
           </Text>   
           <Text></Text>
-          <BarChart data = {data} />
+          <BarChart data = {preferAlcoTypeStats} />
           <PieChart data = {preferAlcoTypeStats} />  
-      </View>
+          <BarChart data = {preferEventTypeStats} />
+          <Text>average percentage of alcohol which you drink {avgPercentage}%</Text>
+      </ScrollView>
+    </View>
   )
 }
 export default StatsPage;
@@ -75,8 +95,15 @@ export default StatsPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    padding:10,
     backgroundColor: '#f0f0f0',
+  },
+  scrollView: {
+    flex: 1,
+   
+    backgroundColor: '#f0f0f0',
+    marginHorizontal: 20,
   },
 });

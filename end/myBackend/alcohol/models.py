@@ -30,9 +30,18 @@ class Alcohol(models.Model):
 
 
 class Event(models.Model):
-    
+    eventNameChoices = [
+        ('Birthday', 'Birthday'),
+        ('Wedding', 'Wedding'),
+        ('Party', 'Party'),
+        ('Meeting with friend', 'Meeting with friend'),
+        ('Work meeting', 'Work meeting'),
+        ('Date', 'Date'),
+        ('Alone', 'Alone'),
+        ('Other', 'Other')
+    ]
     userId = models.ForeignKey(User, related_name='events', on_delete=models.CASCADE, default=1)
-    eventName = models.CharField(max_length=100)
+    eventName = models.CharField(max_length=100, choices=eventNameChoices)
     date = models.DateTimeField()
     alcohol = models.ForeignKey(Alcohol, related_name='events', on_delete=models.CASCADE)
     def __str__(self):

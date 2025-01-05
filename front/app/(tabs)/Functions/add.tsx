@@ -35,6 +35,21 @@ const  AddPage = () =>{
     setPercentage(12)
     setBrand("default wine")
   }
+  if(alcoholTypeVal === "Whiskey"){
+    setalcoholName("default whiskey")
+    setPrice(26)
+    setVolume(40)
+    setPercentage(40)
+    setBrand("default whiskey")
+  }
+  if(alcoholTypeVal === "Liqueur"){
+    setalcoholName("default liqueur")
+    setPrice(26)
+    setVolume(40)
+    setPercentage(40)
+    setBrand("default liqueur")
+  }
+  //dokoncz dopisywanie
 }
 
   const handleSubmit = async () => {
@@ -80,6 +95,15 @@ const  AddPage = () =>{
           { label: 'Bear', value: 'Bear' },
           { label: 'Vodka', value: 'Vodka' },
           { label: 'Wine', value: 'Wine' },
+          { label: 'Whiskey', value: 'Whiskey' },
+          { label: 'Liqueur', value: 'Liqueur' },
+          { label: 'Cider', value: 'Cider' },
+          { label: 'Rum', value: 'Rum' },
+          { label: 'Gin', value: 'Gin' },
+          { label: 'Brandy', value: 'Brandy' },
+          { label: 'Tequila', value: 'Tequila' },
+          { label: 'Cognac', value: 'Cognac' },
+          { label: 'Other', value: 'Other' },
         ]}
           />
           <Text>Alcohol name</Text>
@@ -129,6 +153,12 @@ const  AddPage = () =>{
           items={[
           { label: 'Alone', value: 'Alone' },
           { label: 'Wedding', value: 'Wedding' },
+          { label: 'Birthday', value: 'Birthday' },
+          { label: 'Meeting with friend', value: 'Meeting with friend' },
+          { label: 'Work meeting', value: 'Work meeting' },
+          { label: 'Date', value: 'Date' },
+          { label: 'Other', value: 'Other' },
+          
         ]}
           />
 
