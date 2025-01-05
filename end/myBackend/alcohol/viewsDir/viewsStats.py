@@ -16,21 +16,22 @@ class StatsView(APIView):
         
         startDate = str(self.getDate(request.data.get('startDate'))).replace('-', '')
         endDate = str(self.getDate(request.data.get('endDate'))).replace('-', '')
-        print(startDate)
-        print(endDate)
-        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict['Day'], startDate, endDate)
-        totalAlcoholPriceStats = {row[0]: {'totalPrice': row[1], 'totalAlcohol': row[2]} for row in totalAlcoholPriceStats}
 
+        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict['Day'], startDate, endDate)
+        totalAlcoholPriceStats = [{ 'period': row[0], 'totalPrice': row[1], 'totalAlcohol': row[2]} for row in totalAlcoholPriceStats]
+
+##################
         preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
-        preferAlcoTypeStats = {row[0]:  row[1] for row in preferAlcoTypeStats}
+        preferAlcoTypeStats = [{'alcoholType' : row[0], 'volume':  row[1]} for row in preferAlcoTypeStats]
+##################
 
         avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)[0][0]
 
         preferedEventTypeStats = self.preferedEventType(request.user.id, startDate, endDate)
-        preferedEventTypeStats = {row[0]:  row[1] for row in preferedEventTypeStats}
+        preferedEventTypeStats = [ {'eventType': row[0], 'volume':  row[1]} for row in preferedEventTypeStats]
 
         drinkingHoursStats = self.drinkingHours(request.user.id, startDate, endDate)
-        drinkingHoursStats = {row[0]:  row[1] for row in drinkingHoursStats}
+        drinkingHoursStats = [{'time': row[0],'volume':  row[1]} for row in drinkingHoursStats]
         
         return Response(
             {

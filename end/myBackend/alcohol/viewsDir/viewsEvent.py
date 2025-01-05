@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from alcohol.models import Alcohol, Event
 import datetime
+import pytz
 
 
 
@@ -55,7 +56,7 @@ class EventView(APIView):
             event = Event.objects.create(
                 userId = user1,
                 eventName = request.data.get('eventName'),
-                date = datetime.datetime.now(),
+                date = datetime.datetime.now(pytz.timezone('Europe/Warsaw')),
                 alcohol = alcohol
             )
             return Response({'message': 'Alcohol created successfully'}, status=status.HTTP_201_CREATED)
