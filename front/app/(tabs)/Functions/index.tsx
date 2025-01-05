@@ -28,6 +28,7 @@ const  StatsPage = () =>{
   const processPreferAlcoholStats = (data: {alcoholType: string, volume: number}[]) =>{
     
     console.log(stats);
+    const alcoholTypes = ['Vodka', 'Bear', 'Wine', 'Whiskey', 'Rum', 'Tequila', 'Gin', 'Brandy', 'Liqueur', 'Cider', 'Other'];
     let barData = data.map((item) => ({
       label: item.alcoholType,
       value: item.volume,
@@ -63,7 +64,7 @@ const  StatsPage = () =>{
           <Text>
               index Page
           </Text>   
-          
+          <Text></Text>
           <BarChart data = {data} />
           <PieChart data = {preferAlcoTypeStats} />  
       </View>
