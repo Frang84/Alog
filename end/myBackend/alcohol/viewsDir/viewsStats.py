@@ -11,19 +11,22 @@ import datetime
 import json 
 class StatsView(APIView):
     permission_classes = [IsAuthenticated]
-    __groupByDict = {'Day' : "STRFTIME('%d', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
+    __groupByDict = {'Day' : "STRFTIME('%d-%m-%Y', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
     def post(self, request): 
         
-        startDate = str(self.getDate(request.data.get('startDate'))).replace('-', '')
-        endDate = str(self.getDate(request.data.get('endDate'))).replace('-', '')
+        startDate = str(self.getDate(request.data.get('startDate')))
+        endDate = str(self.getDate(request.data.get('endDate'), 'e')) 
+
+        print("Startdate", startDate)
+        print("EndDate",endDate)
 
         totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict['Day'], startDate, endDate)
         totalAlcoholPriceStats = [{ 'period': row[0], 'totalPrice': row[1], 'totalAlcohol': row[2]} for row in totalAlcoholPriceStats]
 
-##################
+
         preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
         preferAlcoTypeStats = [{'alcoholType' : row[0], 'volume':  row[1]} for row in preferAlcoTypeStats]
-##################
+
 
         avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)[0][0]
 
@@ -44,13 +47,14 @@ class StatsView(APIView):
         )
 
     def totalAlcoholPrice(self, userId, groupBy, startDate, endDate): 
+        print(startDate)
         '''funckaj wylicza calkowity alkohol i cene dla kazdego dnia w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
             cursor.execute(f"""
             SELECT  {groupBy}, SUM(price) as totalPrice, SUM(volume * percentage/100) as totalAlcohol
             FROM alcohol_event 
             INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            WHERE alcohol_event.userId_id = {userId} AND (date BETWEEN '{startDate}' AND '{endDate}')
             GROUP BY {groupBy}
             ORDER BY {groupBy}
             """)
@@ -114,9 +118,12 @@ class StatsView(APIView):
         
         
 
-    def getDate(self, date):
+    def getDate(self, date, opt='s'):
+        print(date)
         ymd = date.split('/')
         year = int(ymd[2])
         month = int(ymd[1])
         day = int(ymd[0])
+        if opt == 'e': 
+             return datetime.datetime(year, month, day, 23,59,59)  
         return datetime.datetime(year, month, day)  
