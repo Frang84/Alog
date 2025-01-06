@@ -13,8 +13,21 @@ const  StatsPage = () =>{
     label?: string;
   }
 
-  const [startDate, setStartDate] = useState("5/1/2024");
-  const [endDate, setEndDate] = useState("11/1/2025");
+  const [startDateFormated, setStartDateFormated] = useState(() => {
+    return formatDate(currentWeekStart());
+  });
+  const [endDateFormated, setEndDateFormated] = useState(() => {
+    return formatDate(currentWeekEnd());
+  });
+
+  const [startDate, setStartDate] = useState<Date>(() => {
+    return currentWeekStart();
+  })
+
+  const [endDate, setEndDate] = useState<Date>(() => {
+    return currentWeekEnd();
+  });
+
   const [preferAlcoTypeStats, setPreferAlcoTypeStats] = useState<barDataItem[]>([]);
   const [avgPercentage, setAvgPercentage] = useState<string>('0');
   const [preferEventTypeStats, setPreferEventTypeStats] = useState<barDataItem[]>([]);
@@ -25,12 +38,17 @@ const  StatsPage = () =>{
  
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const days = [  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    
  
   useEffect(() => {
+    
     
     getStats();
     
   }, [timeSpan]);
+
+
   const generateYears = () =>{
     
     const currentDate = new Date();
@@ -80,7 +98,7 @@ const  StatsPage = () =>{
       
       barData[idx].value = item.totalPrice;
     })
-    console.log('barData: ', barData)
+    
     return barData;
   }
     
@@ -99,6 +117,7 @@ const  StatsPage = () =>{
     });
     return barData;
   }
+
   const processPreferEventStats = (data: {eventType: string, volume: number}[]) =>{
     const events: string[] = ['Party', 'Wedding', 'Birthday', 'Meeting with friend','Work meeting', 'Date', 'Alone', 'Other'];
     let barData = events.map((label) => ({
@@ -131,7 +150,57 @@ const  StatsPage = () =>{
     let month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiąc z zerem na początku
     let year = date.getFullYear(); // Rok
     return `${day}/${month}/${year}`;
-}
+  }
+  function currentWeekStart(){
+    let now = new Date();
+    let startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())) ;
+    return startOfWeek;
+  }
+  function currentWeekEnd(){
+    let now = new Date();
+    let startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())) ;
+    let endOfWeek = new Date(now.setDate(startOfWeek.getDate() + 6));
+    return endOfWeek;
+  }
+  function currentYearEnd(){
+    const now = new Date(); // Pobierz bieżącą datę
+    const endOfYear = new Date(now.getFullYear(), 11, 31); // Ustaw datę na 31 grudnia bieżącego roku
+    return endOfYear;
+  }
+  function currentYearStart(){
+    const now = new Date(); // Pobierz bieżącą datę
+    const startOfYear = new Date(now.getFullYear(), 0, 1); // Ustaw datę na 1 stycznia bieżącego roku
+    return startOfYear;
+  }
+  
+  const  moveForward = (currentStart: Date, currentEnd: Date) => () => {
+    setEndDate(nextWeek(currentEnd));
+    setStartDate(nextWeek(currentStart))
+    setStartDateFormated(formatDate(startDate))
+    setEndDateFormated(formatDate(endDate))
+    console.log(startDate);
+    console.log(endDate);
+  }
+  const  moveBackward = (currentStart: Date, currentEnd: Date) => () => {
+    setEndDate(prevWeek(currentEnd));
+    setStartDate(prevWeek(currentStart))
+    setStartDateFormated(formatDate(startDate))
+    setEndDateFormated(formatDate(endDate))
+    console.log(startDate);
+    console.log(endDate);
+  }
+  const nextYear = (date:Date)=>{
+    return new Date(date.setFullYear(date.getFullYear() + 1))
+  }
+  const prevYear = (date:Date)=>{
+    return new Date(date.setFullYear(date.getFullYear() + 1))
+  }
+  const nextWeek = (date: Date) => {
+    return new Date(date.setDate(date.getDate() + 7))
+  }
+  const prevWeek = (date: Date) => {
+    return new Date(date.setDate(date.getDate() - 7))
+  }
   const getStats = async () => {
     const url = 'http://10.0.2.2:8000/stats'
     const dateToken = await SecureStore.getItemAsync("DateToken");
@@ -139,26 +208,29 @@ const  StatsPage = () =>{
     let spanArr = days
     //konkretne godziny dodawane sa na serwerze 
     if(timeSpan === 'Week'){
+      console.log('in weeks')
       span = 'w';
       spanArr = days;
-      let now = new Date();
-      let startOfWeek = new Date(now.getTime() - 1000 * 60 * 60 * 24 * now.getDay()) ;
-      let formatedStart = formatDate(startOfWeek);
-      let endOfWeek = new Date(startOfWeek.getTime() +  1000 * 60 * 60 * 24 * 6);
-      let formatedEnd = formatDate(endOfWeek);
-      console.log(formatedStart);
-      console.log(formatedEnd);
-      setStartDate(formatedStart);
-      setEndDate(formatedEnd);
-      
+      setStartDate(currentWeekStart());
+      setEndDate(currentWeekEnd());
+      setStartDateFormated(formatDate(currentWeekStart()));
+      setEndDateFormated(formatDate(currentWeekEnd()));
     }
+
     else if(timeSpan === 'Month'){
       span = 'm';
       spanArr = months;
+      setStartDate(currentYearStart());
+      setEndDate(currentYearEnd());
+      setStartDateFormated(formatDate(currentYearStart()));
+      setEndDateFormated(formatDate(currentYearEnd()));
+      console.log('endDateFormatted', endDateFormated);
+      console.log('startDateFormated', startDateFormated);
     }
+    
     const payload = {
-      startDate: startDate,
-      endDate: endDate,
+      startDate: startDateFormated,
+      endDate: endDateFormated,
       timeSpan: timeSpan
     };
     if (dateToken) {
@@ -184,6 +256,9 @@ const  StatsPage = () =>{
   return(
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>  
+        <Text>{startDateFormated} - {endDateFormated}</Text>
+        <Button title=">" onPress={moveForward(startDate, endDate)}></Button>
+        <Button title="<" onPress={moveBackward(startDate, endDate)}></Button>
       <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
           onValueChange={(value) => 
             {
@@ -200,9 +275,13 @@ const  StatsPage = () =>{
           />
           <Text>Prefer alcohol</Text>
           <BarChart data = {preferAlcoTypeStats} />  
+
           <Text>Prefer Event</Text>
           <BarChart data = {preferEventTypeStats} />
+
           <Text>average percentage of alcohol which you drink {avgPercentage}%</Text>
+
+          <Text>prefer time to drink</Text>
           <BarChart data = {preferTimeStats} />
           <Text>Pure alcohol consumption</Text>
           <BarChart data = {totalAlcoholStats} 
