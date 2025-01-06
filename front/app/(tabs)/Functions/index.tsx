@@ -31,9 +31,17 @@ const  StatsPage = () =>{
     getStats();
     
   }, [timeSpan]);
-  // const generateYears = () =>{
-  //   currentYear = new Date()
-  // }
+  const generateYears = () =>{
+    
+    const currentDate = new Date();
+    const Year = currentDate.getFullYear() - 4;
+    let years = [Year.toString()];
+    for (let index = 1; index < 5; index++) {
+      years.push((Year + index).toString())
+    }
+    console.log(years)
+    return years;
+  }
 
   const processTotalAlcoholStats = (data: {period: string, totalAlcohol: number, totalPrice: number}[], timeStamps: string[], opt:string) => {
     let barData = timeStamps.map((label) => ({
@@ -118,10 +126,36 @@ const  StatsPage = () =>{
     return barData;
   }
 
-
+  function formatDate(date:Date) {
+    let day = String(date.getDate()).padStart(2, '0'); // Dzień z zerem na początku
+    let month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiąc z zerem na początku
+    let year = date.getFullYear(); // Rok
+    return `${day}/${month}/${year}`;
+}
   const getStats = async () => {
     const url = 'http://10.0.2.2:8000/stats'
     const dateToken = await SecureStore.getItemAsync("DateToken");
+    let span = 'w'
+    let spanArr = days
+    //konkretne godziny dodawane sa na serwerze 
+    if(timeSpan === 'Week'){
+      span = 'w';
+      spanArr = days;
+      let now = new Date();
+      let startOfWeek = new Date(now.getTime() - 1000 * 60 * 60 * 24 * now.getDay()) ;
+      let formatedStart = formatDate(startOfWeek);
+      let endOfWeek = new Date(startOfWeek.getTime() +  1000 * 60 * 60 * 24 * 6);
+      let formatedEnd = formatDate(endOfWeek);
+      console.log(formatedStart);
+      console.log(formatedEnd);
+      setStartDate(formatedStart);
+      setEndDate(formatedEnd);
+      
+    }
+    else if(timeSpan === 'Month'){
+      span = 'm';
+      spanArr = months;
+    }
     const payload = {
       startDate: startDate,
       endDate: endDate,
@@ -133,16 +167,7 @@ const  StatsPage = () =>{
         const data = await apiPostRequest(url, payload, accessToken);
         console.log("Success", `user loggedin:`, data);
         console.log("timeSpan: ", timeSpan);
-        let span = 'w'
-        let spanArr = days
-        if(timeSpan === 'Week'){
-          span = 'w';
-          spanArr = days;
-        }
-        else if(timeSpan === 'Month'){
-          span = 'm';
-          spanArr = months;
-        }
+
         setPreferAlcoTypeStats(processPreferAlcoholStats(data["preferAlcoTypeStats"]));
         setAvgPercentage(data["avgAlcoholPercentageStats"].toString().substring(0,5));
         setPreferEventTypeStats(processPreferEventStats(data["preferedEventTypeStats"]));
