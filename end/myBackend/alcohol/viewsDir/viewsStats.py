@@ -11,16 +11,16 @@ import datetime
 import json 
 class StatsView(APIView):
     permission_classes = [IsAuthenticated]
-    __groupByDict = {'Day' : "STRFTIME('%d-%m-%Y', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
+    __groupByDict = {'Week' : "STRFTIME('%d-%m-%Y', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
     def post(self, request): 
         
         startDate = str(self.getDate(request.data.get('startDate')))
         endDate = str(self.getDate(request.data.get('endDate'), 'e')) 
-
+        timeSpan = str(request.data.get('timeSpan'))
         print("Startdate", startDate)
         print("EndDate",endDate)
-
-        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict['Day'], startDate, endDate)
+        print('timeSpan ', timeSpan)
+        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict[timeSpan], startDate, endDate)
         totalAlcoholPriceStats = [{ 'period': row[0], 'totalPrice': row[1], 'totalAlcohol': row[2]} for row in totalAlcoholPriceStats]
 
 
@@ -47,7 +47,7 @@ class StatsView(APIView):
         )
 
     def totalAlcoholPrice(self, userId, groupBy, startDate, endDate): 
-        print(startDate)
+        
         '''funckaj wylicza calkowity alkohol i cene dla kazdego dnia w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
             cursor.execute(f"""
@@ -101,7 +101,7 @@ class StatsView(APIView):
             return row
 
     def drinkingHours(self, userId, startDate, endDate):
-        '''oblicza sredni procent alkocholu wypitego w podanym przedziale czasowym'''
+        '''zwraca w jakich godzinach pijemy alkohol'''
         with connection.cursor() as cursor:
             cursor.execute(f"""
             SELECT STRFTIME('%H', date) as timeOfDrinking, SUM(volume * percentage/100) as totalAlcohol

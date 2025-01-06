@@ -4,6 +4,7 @@ import { BarChart, LineChart, PieChart, PopulationPyramid, RadarChart } from "re
 import { useEffect, useState } from "react";
 import { apiGetRequest, apiPostRequest } from "@/app/functions/apiRequest";
 import * as SecureStore from 'expo-secure-store';
+import RNPickerSelect from 'react-native-picker-select';
 
 const  StatsPage = () =>{
 
@@ -20,7 +21,7 @@ const  StatsPage = () =>{
   const [preferTimeStats, setPreferTimeStats] = useState<barDataItem[]>([]);
   const [totalAlcoholStats, settotalAlcoholStats] = useState<barDataItem[]>([]);
   const [totalAlcoholPrice, setTotalAlcoholPrice] = useState<barDataItem[]>([]);
-
+  const [timeSpan, setTimeSpan] = useState('Week');
  
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const days = [  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -29,31 +30,47 @@ const  StatsPage = () =>{
     
     getStats();
     
-  }, []);
+  }, [timeSpan]);
+  // const generateYears = () =>{
+  //   currentYear = new Date()
+  // }
 
-  const processTotalAlcoholStats = (data: {period: string, totalAlcohol: number, totalPrice: number}[], timeStamps: string[]) => {
+  const processTotalAlcoholStats = (data: {period: string, totalAlcohol: number, totalPrice: number}[], timeStamps: string[], opt:string) => {
     let barData = timeStamps.map((label) => ({
       label: label,
       value: 0,
     }));
     
     data.forEach((item) => {
-      const day = new Date(item.period ).getDay();
-      barData[day].value = item.totalAlcohol;
+      let idx = 0;
+      if(opt === 'w'){
+      idx = new Date(item.period ).getDay();    
+      }
+      else if(opt === 'm'){
+        idx = parseInt(item.period) - 1 //dostajemy miesiace ponumerowane od 1 a indeksy w tablicy zaczynaja sie od 0. 
+      }
+      barData[idx].value = item.totalAlcohol;
     })
     console.log('barData: ', barData)
     return barData;
   }
 
-  const processTotalPriceStats = (data: {period: string, totalAlcohol: number, totalPrice: number}[], timeStamps: string[]) => {
+  const processTotalPriceStats = (data: {period: string, totalAlcohol: number, totalPrice: number}[], timeStamps: string[], opt:string) => {
     let barData = timeStamps.map((label) => ({
       label: label,
       value: 0,
     }));
     
     data.forEach((item) => {
-      const day = new Date(item.period ).getDay();
-      barData[day].value = item.totalPrice;
+      let idx = 0;
+      if(opt == 'w'){
+        idx = new Date(item.period ).getDay();
+      }
+      else if(opt == 'm'){
+        idx = parseInt(item.period) - 1;
+      }
+      
+      barData[idx].value = item.totalPrice;
     })
     console.log('barData: ', barData)
     return barData;
@@ -107,19 +124,31 @@ const  StatsPage = () =>{
     const dateToken = await SecureStore.getItemAsync("DateToken");
     const payload = {
       startDate: startDate,
-      endDate: endDate
+      endDate: endDate,
+      timeSpan: timeSpan
     };
     if (dateToken) {
       const accessToken = JSON.parse(dateToken).token.access;
       try {
         const data = await apiPostRequest(url, payload, accessToken);
         console.log("Success", `user loggedin:`, data);
+        console.log("timeSpan: ", timeSpan);
+        let span = 'w'
+        let spanArr = days
+        if(timeSpan === 'Week'){
+          span = 'w';
+          spanArr = days;
+        }
+        else if(timeSpan === 'Month'){
+          span = 'm';
+          spanArr = months;
+        }
         setPreferAlcoTypeStats(processPreferAlcoholStats(data["preferAlcoTypeStats"]));
         setAvgPercentage(data["avgAlcoholPercentageStats"].toString().substring(0,5));
         setPreferEventTypeStats(processPreferEventStats(data["preferedEventTypeStats"]));
         setPreferTimeStats(processPreferTimeStats(data["drinkingHoursStats"]));
-        settotalAlcoholStats(processTotalAlcoholStats(data["totalAlcoholPriceStats"], days));
-        setTotalAlcoholPrice(processTotalPriceStats(data["totalAlcoholPriceStats"], days));
+        settotalAlcoholStats(processTotalAlcoholStats(data["totalAlcoholPriceStats"], spanArr, span));
+        setTotalAlcoholPrice(processTotalPriceStats(data["totalAlcoholPriceStats"], spanArr, span ));
       } catch (error) {
         console.error("Error occured", error);
       }
@@ -130,6 +159,20 @@ const  StatsPage = () =>{
   return(
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>  
+      <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
+          onValueChange={(value) => 
+            {
+              setTimeSpan(value);
+              
+              console.log("timeSpan: ",timeSpan)
+            }}
+          
+          items={[
+            { label: 'Week', value: 'Week' },
+            { label: 'Month', value: 'Month' },
+            { label: 'Year', value: 'Year' },
+        ]}
+          />
           <Text>Prefer alcohol</Text>
           <BarChart data = {preferAlcoTypeStats} />  
           <Text>Prefer Event</Text>
@@ -143,7 +186,7 @@ const  StatsPage = () =>{
           onPress = {(item: {label: string, value: number},index: number)=>console.log('item',item)}
           
           />
-          <Text>Pure alcohol consumption</Text>
+          <Text>money which you spend for alcohol</Text>
           <BarChart data = {totalAlcoholPrice} />
       </ScrollView>
     </View>
@@ -164,5 +207,20 @@ const styles = StyleSheet.create({
    
     backgroundColor: '#f0f0f0',
     marginHorizontal: 20,
+  },
+  inputAndroid: {
+    fontSize: 16,
+    padding: 10,
+    borderWidth: 1,
+    width: 160,
+    color: 'black',
+     
+  },
+  input:{
+    height: 40,
+    width: 160,
+    margin: 12,
+    padding: 10,
+    borderWidth: 1,
   },
 });
