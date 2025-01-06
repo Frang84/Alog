@@ -11,7 +11,7 @@ import datetime
 import json 
 class StatsView(APIView):
     permission_classes = [IsAuthenticated]
-    __groupByDict = {'Week' : "STRFTIME('%d-%m-%Y', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
+    __groupByDict = {'Day' : "STRFTIME('%H', date)",'Week' : "STRFTIME('%d-%m-%Y', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
     def post(self, request): 
         
         startDate = str(self.getDate(request.data.get('startDate')))

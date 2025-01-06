@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { apiGetRequest, apiPostRequest } from "@/app/functions/apiRequest";
 import * as SecureStore from 'expo-secure-store';
 import RNPickerSelect from 'react-native-picker-select';
+import { parse } from "@babel/core";
 
 const  StatsPage = () =>{
 
@@ -38,7 +39,7 @@ const  StatsPage = () =>{
  
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const days = [  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
+  const hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
     
  
   useEffect(() => {
@@ -46,13 +47,13 @@ const  StatsPage = () =>{
     
     getStats();
     
-  }, [timeSpan]);
+  }, [timeSpan,startDate]);
 
 
   const generateYears = () =>{
     
-    const currentDate = new Date();
-    const Year = currentDate.getFullYear() - 4;
+    
+    const Year = endDate.getFullYear() - 4;
     let years = [Year.toString()];
     for (let index = 1; index < 5; index++) {
       years.push((Year + index).toString())
@@ -69,12 +70,19 @@ const  StatsPage = () =>{
     
     data.forEach((item) => {
       let idx = 0;
-      if(opt === 'w'){
+      if (opt === 'd'){
+        idx = parseInt(item.period);
+      }
+      else if(opt === 'w'){
       idx = new Date(item.period ).getDay();    
       }
       else if(opt === 'm'){
         idx = parseInt(item.period) - 1 //dostajemy miesiace ponumerowane od 1 a indeksy w tablicy zaczynaja sie od 0. 
       }
+      else if(opt === 'y'){
+        idx = parseInt(item.period) - parseInt(timeStamps[0]);
+      }
+      
       barData[idx].value = item.totalAlcohol;
     })
     console.log('barData: ', barData)
@@ -89,13 +97,18 @@ const  StatsPage = () =>{
     
     data.forEach((item) => {
       let idx = 0;
+      if (opt === 'd'){
+        idx = parseInt(item.period);
+      }
       if(opt == 'w'){
         idx = new Date(item.period ).getDay();
       }
       else if(opt == 'm'){
         idx = parseInt(item.period) - 1;
       }
-      
+      else if(opt === 'y'){
+        idx = parseInt(item.period) - parseInt(timeStamps[0]);
+      }
       barData[idx].value = item.totalPrice;
     })
     
@@ -151,6 +164,10 @@ const  StatsPage = () =>{
     let year = date.getFullYear(); // Rok
     return `${day}/${month}/${year}`;
   }
+  function currentDay(){
+    return new Date();
+  }
+  
   function currentWeekStart(){
     let now = new Date();
     let startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())) ;
@@ -172,28 +189,83 @@ const  StatsPage = () =>{
     const startOfYear = new Date(now.getFullYear(), 0, 1); // Ustaw datę na 1 stycznia bieżącego roku
     return startOfYear;
   }
+  function fourYearsAgo(){
+    const now = new Date(); // Pobierz bieżącą datę
+    const startOfYear = new Date(now.getFullYear() - 4, 0, 1); // Ustaw datę na 1 stycznia bieżącego roku
+    return startOfYear;
+  }
   
   const  moveForward = (currentStart: Date, currentEnd: Date) => () => {
+  if(timeSpan === "Day"){
+    setEndDate(nextDay(currentEnd));
+    setStartDate(nextDay(currentStart))
+    setStartDateFormated(formatDate(startDate))
+    setEndDateFormated(formatDate(endDate))
+  }
+  else if(timeSpan === "Week"){
     setEndDate(nextWeek(currentEnd));
     setStartDate(nextWeek(currentStart))
     setStartDateFormated(formatDate(startDate))
     setEndDateFormated(formatDate(endDate))
+  }
+  else if(timeSpan === "Month"){
+    setEndDate(nextYear(currentEnd));
+    setStartDate(nextYear(currentStart))
+    setStartDateFormated(formatDate(startDate))
+    setEndDateFormated(formatDate(endDate))
+  }
+  else if(timeSpan === "Year"){
+    setEndDate(nextFourYears(currentEnd));
+    setStartDate(nextFourYears(currentStart))
+    setStartDateFormated(formatDate(startDate))
+    setEndDateFormated(formatDate(endDate))
+  }
     console.log(startDate);
     console.log(endDate);
   }
   const  moveBackward = (currentStart: Date, currentEnd: Date) => () => {
-    setEndDate(prevWeek(currentEnd));
-    setStartDate(prevWeek(currentStart))
-    setStartDateFormated(formatDate(startDate))
-    setEndDateFormated(formatDate(endDate))
-    console.log(startDate);
-    console.log(endDate);
+    if(timeSpan === "Day"){
+      setEndDate(prevDay(currentEnd));
+      setStartDate(prevDay(currentStart))
+      setStartDateFormated(formatDate(startDate))
+      setEndDateFormated(formatDate(endDate))
+    }
+    else if(timeSpan === "Week"){
+      setEndDate(prevWeek(currentEnd));
+      setStartDate(prevWeek(currentStart))
+      setStartDateFormated(formatDate(startDate))
+      setEndDateFormated(formatDate(endDate))
+    }
+    else if(timeSpan === "Month"){
+      setEndDate(prevYear(currentEnd));
+      setStartDate(prevYear(currentStart))
+      setStartDateFormated(formatDate(startDate))
+      setEndDateFormated(formatDate(endDate))
+    }
+    else if(timeSpan === "Year"){
+      setEndDate(prevFourYears(currentEnd));
+      setStartDate(prevFourYears(currentStart))
+      setStartDateFormated(formatDate(startDate))
+      setEndDateFormated(formatDate(endDate))
+    }
+  }
+  const nextFourYears = (date:Date)=>{
+    return new Date(date.setFullYear(date.getFullYear() + 4))
+  }
+  const prevFourYears = (date:Date)=>{
+    return new Date(date.setFullYear(date.getFullYear() - 4))
   }
   const nextYear = (date:Date)=>{
     return new Date(date.setFullYear(date.getFullYear() + 1))
   }
   const prevYear = (date:Date)=>{
-    return new Date(date.setFullYear(date.getFullYear() + 1))
+    return new Date(date.setFullYear(date.getFullYear() - 1))
+  }
+  const nextDay = (date: Date) => {
+    return new Date(date.setDate(date.getDate() + 1))
+  }
+  const prevDay = (date: Date) => {
+    return new Date(date.setDate(date.getDate() - 1))
   }
   const nextWeek = (date: Date) => {
     return new Date(date.setDate(date.getDate() + 7))
@@ -207,25 +279,29 @@ const  StatsPage = () =>{
     let span = 'w'
     let spanArr = days
     //konkretne godziny dodawane sa na serwerze 
-    if(timeSpan === 'Week'){
+    if(timeSpan == 'Day'){
+      span = 'd';
+      spanArr = hours;
+      
+    }
+    else if(timeSpan === 'Week'){
       console.log('in weeks')
       span = 'w';
       spanArr = days;
-      setStartDate(currentWeekStart());
-      setEndDate(currentWeekEnd());
-      setStartDateFormated(formatDate(currentWeekStart()));
-      setEndDateFormated(formatDate(currentWeekEnd()));
+
     }
 
     else if(timeSpan === 'Month'){
       span = 'm';
       spanArr = months;
-      setStartDate(currentYearStart());
-      setEndDate(currentYearEnd());
-      setStartDateFormated(formatDate(currentYearStart()));
-      setEndDateFormated(formatDate(currentYearEnd()));
+
       console.log('endDateFormatted', endDateFormated);
       console.log('startDateFormated', startDateFormated);
+    }
+
+    else if(timeSpan === 'Year'){
+      span = 'y';
+      spanArr = generateYears();
     }
     
     const payload = {
@@ -241,7 +317,8 @@ const  StatsPage = () =>{
         console.log("timeSpan: ", timeSpan);
 
         setPreferAlcoTypeStats(processPreferAlcoholStats(data["preferAlcoTypeStats"]));
-        setAvgPercentage(data["avgAlcoholPercentageStats"].toString().substring(0,5));
+        let avgAlcPer = (data["avgAlcoholPercentageStats"] !== null) ? data["avgAlcoholPercentageStats"].toString().substring(0,5) : '0.0';
+        setAvgPercentage(avgAlcPer);
         setPreferEventTypeStats(processPreferEventStats(data["preferedEventTypeStats"]));
         setPreferTimeStats(processPreferTimeStats(data["drinkingHoursStats"]));
         settotalAlcoholStats(processTotalAlcoholStats(data["totalAlcoholPriceStats"], spanArr, span));
@@ -252,6 +329,37 @@ const  StatsPage = () =>{
     }
   }
 
+  const timePeriod = () => {
+    if(timeSpan === 'Day'){
+      console.log('in weeks')
+      setStartDate(currentDay());
+      setEndDate(currentDay());
+      setStartDateFormated(formatDate(currentDay()));
+      setEndDateFormated(formatDate(currentDay()));
+    }
+    else if(timeSpan === 'Week'){
+      console.log('in weeks')
+      setStartDate(currentWeekStart());
+      setEndDate(currentWeekEnd());
+      setStartDateFormated(formatDate(currentWeekStart()));
+      setEndDateFormated(formatDate(currentWeekEnd()));
+    }
+
+    else if(timeSpan === 'Month'){
+      setStartDate(currentYearStart());
+      setEndDate(currentYearEnd());
+      setStartDateFormated(formatDate(currentYearStart()));
+      setEndDateFormated(formatDate(currentYearEnd()));
+      console.log('endDateFormatted', endDateFormated);
+      console.log('startDateFormated', startDateFormated);
+    }
+    else if(timeSpan === 'Year'){
+      setStartDate(fourYearsAgo());
+      setEndDate(currentYearEnd());
+      setStartDateFormated(formatDate(fourYearsAgo()));
+      setEndDateFormated(formatDate(currentYearEnd()));
+    }
+  }
   
   return(
     <View style={styles.container}>
@@ -263,11 +371,13 @@ const  StatsPage = () =>{
           onValueChange={(value) => 
             {
               setTimeSpan(value);
-              
+              console.log('value changed')
+              timePeriod();
               console.log("timeSpan: ",timeSpan)
             }}
           
           items={[
+            { label: 'Day', value: 'Day' },
             { label: 'Week', value: 'Week' },
             { label: 'Month', value: 'Month' },
             { label: 'Year', value: 'Year' },
