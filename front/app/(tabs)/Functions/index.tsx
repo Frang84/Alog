@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { apiGetRequest, apiPostRequest } from "@/app/functions/apiRequest";
 import * as SecureStore from 'expo-secure-store';
 import RNPickerSelect from 'react-native-picker-select';
+import {formatDate, currentDay,currentWeekStart, currentWeekEnd, currentYearStart, currentYearEnd,fourYearsAgo,prevWeek,nextDay,nextWeek,nextYear,nextFourYears,prevDay, prevYear,prevFourYears} from './timeManager/time';
 import { parse } from "@babel/core";
 
 const  StatsPage = () =>{
@@ -158,42 +159,7 @@ const  StatsPage = () =>{
     return barData;
   }
 
-  function formatDate(date:Date) {
-    let day = String(date.getDate()).padStart(2, '0'); // Dzień z zerem na początku
-    let month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiąc z zerem na początku
-    let year = date.getFullYear(); // Rok
-    return `${day}/${month}/${year}`;
-  }
-  function currentDay(){
-    return new Date();
-  }
-  
-  function currentWeekStart(){
-    let now = new Date();
-    let startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())) ;
-    return startOfWeek;
-  }
-  function currentWeekEnd(){
-    let now = new Date();
-    let startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())) ;
-    let endOfWeek = new Date(now.setDate(startOfWeek.getDate() + 6));
-    return endOfWeek;
-  }
-  function currentYearEnd(){
-    const now = new Date(); // Pobierz bieżącą datę
-    const endOfYear = new Date(now.getFullYear(), 11, 31); // Ustaw datę na 31 grudnia bieżącego roku
-    return endOfYear;
-  }
-  function currentYearStart(){
-    const now = new Date(); // Pobierz bieżącą datę
-    const startOfYear = new Date(now.getFullYear(), 0, 1); // Ustaw datę na 1 stycznia bieżącego roku
-    return startOfYear;
-  }
-  function fourYearsAgo(){
-    const now = new Date(); // Pobierz bieżącą datę
-    const startOfYear = new Date(now.getFullYear() - 4, 0, 1); // Ustaw datę na 1 stycznia bieżącego roku
-    return startOfYear;
-  }
+
   
   const  moveForward = (currentStart: Date, currentEnd: Date) => () => {
   if(timeSpan === "Day"){
@@ -249,30 +215,7 @@ const  StatsPage = () =>{
       setEndDateFormated(formatDate(endDate))
     }
   }
-  const nextFourYears = (date:Date)=>{
-    return new Date(date.setFullYear(date.getFullYear() + 4))
-  }
-  const prevFourYears = (date:Date)=>{
-    return new Date(date.setFullYear(date.getFullYear() - 4))
-  }
-  const nextYear = (date:Date)=>{
-    return new Date(date.setFullYear(date.getFullYear() + 1))
-  }
-  const prevYear = (date:Date)=>{
-    return new Date(date.setFullYear(date.getFullYear() - 1))
-  }
-  const nextDay = (date: Date) => {
-    return new Date(date.setDate(date.getDate() + 1))
-  }
-  const prevDay = (date: Date) => {
-    return new Date(date.setDate(date.getDate() - 1))
-  }
-  const nextWeek = (date: Date) => {
-    return new Date(date.setDate(date.getDate() + 7))
-  }
-  const prevWeek = (date: Date) => {
-    return new Date(date.setDate(date.getDate() - 7))
-  }
+
   const getStats = async () => {
     const url = 'http://10.0.2.2:8000/stats'
     const dateToken = await SecureStore.getItemAsync("DateToken");
