@@ -8,6 +8,13 @@ export default function RootLayout() {
         headerShown: false
       }}/>
       <Tabs.Screen name="settings" />
+      <Tabs.Screen name="index" options={{
+          headerShown: false,
+          headerTitle: "Stats",
+          title: "Stats"
+        }}
+        />
+      
     </Tabs>
   );
 }

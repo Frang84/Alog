@@ -5,15 +5,16 @@ import { useEffect, useState } from "react";
 import { apiGetRequest, apiPostRequest } from "@/app/functions/apiRequest";
 import * as SecureStore from 'expo-secure-store';
 import RNPickerSelect from 'react-native-picker-select';
-import {formatDate, currentDay,currentWeekStart, currentWeekEnd, currentYearStart, currentYearEnd,fourYearsAgo,prevWeek,nextDay,nextWeek,nextYear,nextFourYears,prevDay, prevYear,prevFourYears} from './timeManager/time';
+import {formatDate, currentDay,currentWeekStart, currentWeekEnd, currentYearStart, currentYearEnd,fourYearsAgo,prevWeek,nextDay,nextWeek,nextYear,nextFourYears,prevDay, prevYear,prevFourYears} from './timeStatsManager/time'
+import {processPreferAlcoholStats, processPreferEventStats, processPreferTimeStats, processTotalAlcoholStats, processTotalPriceStats} from './timeStatsManager/stats'
+import {barDataItem} from './types'
+import MyBarChart from '../../myCharts/myBarChart'
+import Test from '../../functions/test'
 import { parse } from "@babel/core";
 
 const  StatsPage = () =>{
 
-  interface barDataItem{
-    value: number;
-    label?: string;
-  }
+
 
   const [startDateFormated, setStartDateFormated] = useState(() => {
     return formatDate(currentWeekStart());
@@ -44,16 +45,11 @@ const  StatsPage = () =>{
     
  
   useEffect(() => {
-    
-    
     getStats();
-    
   }, [timeSpan,startDate]);
 
 
   const generateYears = () =>{
-    
-    
     const Year = endDate.getFullYear() - 4;
     let years = [Year.toString()];
     for (let index = 1; index < 5; index++) {
@@ -63,101 +59,7 @@ const  StatsPage = () =>{
     return years;
   }
 
-  const processTotalAlcoholStats = (data: {period: string, totalAlcohol: number, totalPrice: number}[], timeStamps: string[], opt:string) => {
-    let barData = timeStamps.map((label) => ({
-      label: label,
-      value: 0,
-    }));
-    
-    data.forEach((item) => {
-      let idx = 0;
-      if (opt === 'd'){
-        idx = parseInt(item.period);
-      }
-      else if(opt === 'w'){
-      idx = new Date(item.period ).getDay();    
-      }
-      else if(opt === 'm'){
-        idx = parseInt(item.period) - 1 //dostajemy miesiace ponumerowane od 1 a indeksy w tablicy zaczynaja sie od 0. 
-      }
-      else if(opt === 'y'){
-        idx = parseInt(item.period) - parseInt(timeStamps[0]);
-      }
-      
-      barData[idx].value = item.totalAlcohol;
-    })
-    console.log('barData: ', barData)
-    return barData;
-  }
-
-  const processTotalPriceStats = (data: {period: string, totalAlcohol: number, totalPrice: number}[], timeStamps: string[], opt:string) => {
-    let barData = timeStamps.map((label) => ({
-      label: label,
-      value: 0,
-    }));
-    
-    data.forEach((item) => {
-      let idx = 0;
-      if (opt === 'd'){
-        idx = parseInt(item.period);
-      }
-      if(opt == 'w'){
-        idx = new Date(item.period ).getDay();
-      }
-      else if(opt == 'm'){
-        idx = parseInt(item.period) - 1;
-      }
-      else if(opt === 'y'){
-        idx = parseInt(item.period) - parseInt(timeStamps[0]);
-      }
-      barData[idx].value = item.totalPrice;
-    })
-    
-    return barData;
-  }
-    
-
-
-  const processPreferAlcoholStats = (data: {alcoholType: string, volume: number}[]) =>{
-    const alcoholTypes: string[] = ['Vodka', 'Bear', 'Wine', 'Whiskey', 'Rum', 'Tequila', 'Gin', 'Brandy', 'Liqueur', 'Cider', 'Other'];
-    let barData = alcoholTypes.map((label) => ({
-      label: label,
-      value: 0,
-    })); 
-    data.forEach((item) => {
-      const type = item.alcoholType;
-      const index = barData.findIndex((item) => item.label === type);
-      barData[index].value = item.volume;
-    });
-    return barData;
-  }
-
-  const processPreferEventStats = (data: {eventType: string, volume: number}[]) =>{
-    const events: string[] = ['Party', 'Wedding', 'Birthday', 'Meeting with friend','Work meeting', 'Date', 'Alone', 'Other'];
-    let barData = events.map((label) => ({
-      label: label,
-      value: 0,
-    })); 
-    data.forEach((item) => {
-      const type = item.eventType;
-      const index = barData.findIndex((item) => item.label === type);
-      barData[index].value = item.volume;
-    });
-    return barData;
-  }
-  const processPreferTimeStats = (data: {time: string, volume: number}[]) =>{
-    const times: string[] = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11','12','13','14','15','16','17','18','19','20','21','22','23'];
-    let barData = times.map((label) => ({
-      label: label,
-      value: 0,
-    })); 
-    data.forEach((item) => {
-      const type = item.time;
-      const index = barData.findIndex((item) => item.label === type);
-      barData[index].value = item.volume;
-    });
-    return barData;
-  }
+  
 
 
   
@@ -238,8 +140,6 @@ const  StatsPage = () =>{
       span = 'm';
       spanArr = months;
 
-      console.log('endDateFormatted', endDateFormated);
-      console.log('startDateFormated', startDateFormated);
     }
 
     else if(timeSpan === 'Year'){
@@ -293,8 +193,7 @@ const  StatsPage = () =>{
       setEndDate(currentYearEnd());
       setStartDateFormated(formatDate(currentYearStart()));
       setEndDateFormated(formatDate(currentYearEnd()));
-      console.log('endDateFormatted', endDateFormated);
-      console.log('startDateFormated', startDateFormated);
+
     }
     else if(timeSpan === 'Year'){
       setStartDate(fourYearsAgo());
@@ -326,25 +225,39 @@ const  StatsPage = () =>{
             { label: 'Year', value: 'Year' },
         ]}
           />
-          <Text>Prefer alcohol</Text>
-          <BarChart data = {preferAlcoTypeStats} />  
-
-          <Text>Prefer Event</Text>
-          <BarChart data = {preferEventTypeStats} />
+          
+          {/* <Text>Prefer alcohol in ml of pure (100%) alcohol</Text>
+          
+          <MyBarChart data={preferAlcoTypeStats}/>
+          <PieChart data={preferAlcoTypeStats}></PieChart>
+          <Text>Prefer Event in term of pure Alcohol consumption in ml</Text>
+          <MyBarChart data = {preferEventTypeStats} />
 
           <Text>average percentage of alcohol which you drink {avgPercentage}%</Text>
 
           <Text>prefer time to drink</Text>
-          <BarChart data = {preferTimeStats} />
+          <MyBarChart data = {preferTimeStats} />
+
           <Text>Pure alcohol consumption</Text>
-          <BarChart data = {totalAlcoholStats} 
-          
-          yAxisLabelSuffix=" ml"
-          onPress = {(item: {label: string, value: number},index: number)=>console.log('item',item)}
-          
+          <MyBarChart data = {totalAlcoholStats} 
           />
           <Text>money which you spend for alcohol</Text>
-          <BarChart data = {totalAlcoholPrice} />
+          <MyBarChart data = {totalAlcoholPrice} /> */}
+          <Text>Prefer alcohol in ml of pure (100%) alcohol</Text>
+          <MyBarChart data={preferAlcoTypeStats}></MyBarChart>
+
+          <Text>Prefer Event in term of pure Alcohol consumption in ml</Text>
+          <MyBarChart data={preferEventTypeStats}></MyBarChart>
+
+          <Text>prefer time to drink</Text>
+          <MyBarChart data={preferTimeStats}></MyBarChart>
+
+          <Text>Pure alcohol consumption</Text>
+          <MyBarChart data={totalAlcoholStats}></MyBarChart>
+
+          <Text>money which you spend on alcohol</Text>
+          <MyBarChart data={totalAlcoholPrice}></MyBarChart>
+
       </ScrollView>
     </View>
   )

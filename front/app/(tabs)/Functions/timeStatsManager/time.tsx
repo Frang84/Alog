@@ -34,6 +34,7 @@ export function formatDate(date:Date) {
     const startOfYear = new Date(now.getFullYear() - 4, 0, 1); // Ustaw datę na 1 stycznia bieżącego roku
     return startOfYear;
   }
+  
 
     export const nextFourYears = (date:Date)=>{
       return new Date(date.setFullYear(date.getFullYear() + 4))
