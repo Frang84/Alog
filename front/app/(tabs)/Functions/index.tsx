@@ -225,8 +225,7 @@ const  StatsPage = () =>{
             { label: 'Week', value: 'Week' },
             { label: 'Month', value: 'Month' },
             { label: 'Year', value: 'Year' },
-        ]}
-          />
+        ]}/>
 
           <Text>Prefer alcohol in ml of pure (100%) alcohol</Text>
           <MyBarChart data={preferAlcoTypeStats}></MyBarChart>

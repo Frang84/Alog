@@ -12,10 +12,17 @@ export const customStyleChellange = StyleSheet.create({
   },
   button: {
     flex: 1, // Przydziela równą szerokość obu przyciskom (opcjonalne)
-   
     padding: 10,
     marginHorizontal: 5, // Odstępy między przyciskami
     borderRadius: 5,
+},
+input:{
+  height: 40,
+  width: 160,
+  margin: 12,
+  padding: 10,
+  borderWidth: 1,
+  borderColor: "#27b376",
 },
 
 })

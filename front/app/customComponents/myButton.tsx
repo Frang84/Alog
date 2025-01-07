@@ -9,7 +9,7 @@ type myButtonProps = {
 
 
 const myButton = (props: myButtonProps) =>{
-    let text = 'test'
+    
     return(
         <TouchableOpacity style={customeStyle.touchableOpacity}  onPressIn={props.onPressFun}>
             <View style={customeStyle.button}>
