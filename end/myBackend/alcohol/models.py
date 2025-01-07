@@ -18,7 +18,7 @@ class Alcohol(models.Model):
         ('Other', 'Other')
     ]
     name = models.CharField(max_length=200)
-    alcoholType = models.CharField(max_length=100, choices=alcoholTypeChoices)#uzyj choice
+    alcoholType = models.CharField(max_length=100, choices=alcoholTypeChoices)
     price = models.FloatField()
     volume = models.FloatField()
     percentage = models.FloatField()
@@ -46,3 +46,15 @@ class Event(models.Model):
     alcohol = models.ForeignKey(Alcohol, related_name='events', on_delete=models.CASCADE)
     def __str__(self):
         return self.name
+
+
+class Chellange(models.Model): 
+    chellangeTypeChoice = [
+        ('Limit', 'Limit'),
+        ('Alone', 'Alone')
+    ]
+    user = models.ForeignKey(User, related_name='chellenges', on_delete=models.CASCADE)
+    limit = models.FloatField()
+    chellangeType = models.CharField(max_length=100, choices=chellangeTypeChoice)
+    startDate = models.DateTimeField()
+    endDate = models.DateTimeField()

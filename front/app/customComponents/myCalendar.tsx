@@ -13,9 +13,10 @@ const MyCalendar = (props: myCalendarProps) => {
         <Calendar
         onDayPress = {(day: any) => {
             console.log('selected day: ', day);
+            console.log(new Date(day['dateString']))
             props.setDateFun(day['dateString']);
-            props.setVisibilityFun(!props.visibility);
-            console.log(props.visibility)
+            props.setVisibilityFun(props.visibility);
+            //console.log(props.visibility)
         }}
         minDate={ formatDateCalendar(new Date()) }>
     </Calendar>
