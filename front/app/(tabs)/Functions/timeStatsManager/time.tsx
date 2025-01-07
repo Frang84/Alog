@@ -4,6 +4,12 @@ export function formatDate(date:Date) {
     let year = date.getFullYear(); // Rok
     return `${day}/${month}/${year}`;
   }
+export function formatDateCalendar(date:Date){
+  let day = String(date.getDate()).padStart(2, '0'); // Dzień z zerem na początku
+  let month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiąc z zerem na początku
+  let year = date.getFullYear(); // Rok
+  return `${year}-${month}-${day}`;
+}
   export function currentDay(){
     return new Date();
   }

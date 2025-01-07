@@ -11,7 +11,7 @@ const ChellangeScreen = () =>{
     return(
         <View style={customeStyle.container}>
             <ScrollView style={customeStyle.scrollView}>
-                <MyButton TouchableOpacityStyle={customeStyle.touchableOpacity} onPressFun={() => router.navigate('/extraScreens/createChellange')} />
+                <MyButton  onPressFun={() => router.navigate('/extraScreens/createChellange')} textToPrint='chellange' />
             </ScrollView>
         </View>
     )

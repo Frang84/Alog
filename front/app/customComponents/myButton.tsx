@@ -1,12 +1,19 @@
 import { customeStyle } from "../style"
 import { TouchableOpacity, View, Text, StyleSheet  } from "react-native"
 
+type myButtonProps = {
+    onPressFun: () => void,
+    textToPrint: string,
+    
+}
 
-const myButton = ({onPressFun} : any) =>{
+
+const myButton = (props: myButtonProps) =>{
+    let text = 'test'
     return(
-        <TouchableOpacity style={customeStyle.touchableOpacity}  onPressIn={onPressFun}>
+        <TouchableOpacity style={customeStyle.touchableOpacity}  onPressIn={props.onPressFun}>
             <View style={customeStyle.button}>
-                <Text style={customeStyle.textButton}>new chellange</Text>
+                <Text style={customeStyle.textButton}> {props.textToPrint} </Text>
             </View>
         </TouchableOpacity>
     )
