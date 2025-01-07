@@ -11,6 +11,10 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)/Functions" options={{
         headerShown: false
       }}/>
+      <Stack.Screen name="createChellange" options={{
+        headerTitle: "back"
+      }}/>
+      
     </Stack>
   );
 }

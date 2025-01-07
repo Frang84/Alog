@@ -60,3 +60,12 @@ export function formatDate(date:Date) {
     export  const prevWeek = (date: Date) => {
       return new Date(date.setDate(date.getDate() - 7))
     }
+    export const generateYears = (endDate: Date) =>{
+      const Year = endDate.getFullYear() - 4;
+      let years = [Year.toString()];
+      for (let index = 1; index < 5; index++) {
+        years.push((Year + index).toString())
+      }
+      console.log(years)
+      return years;
+    }

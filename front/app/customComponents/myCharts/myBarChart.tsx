@@ -19,6 +19,7 @@ export default function MyBarChart( {data} : MyBarChartProps){
         yAxisThickness={0}
         xAxisThickness={0}
         isAnimated
+        animationDuration={600}
         
         ></BarChart>
         </View>

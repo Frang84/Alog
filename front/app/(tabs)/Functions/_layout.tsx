@@ -12,8 +12,14 @@ export default function RootLayout() {
           headerShown: false,
           headerTitle: "Stats",
           title: "Stats"
-        }}
-        />
+        }}/>
+        <Tabs.Screen name="chellange" options={{
+          headerShown: false,
+          
+          title: "Chellange"
+        }}/>
+        
+        
       
     </Tabs>
   );

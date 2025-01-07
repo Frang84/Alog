@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet,TextInput, SafeAreaView, KeyboardAvoidingView, Button, Keyboard } from "react-native"
+import { Text, View, StyleSheet,TextInput, SafeAreaView, KeyboardAvoidingView, Button, Keyboard, Alert, ToastAndroid } from "react-native"
 import { useState } from "react"
 import {Link} from "expo-router"
 import RNPickerSelect from 'react-native-picker-select';
@@ -75,10 +75,12 @@ const  AddPage = () =>{
     try {
       const data = await apiPostRequest(url, payload, accessToken);
       console.log("Success", `user loggedin:`,data);
+      ToastAndroid.show('Element added successfully', ToastAndroid.LONG);
       
     } catch (error) {
       console.error("Error occured:", error);
       console.log("Error", "Unable to connect to the server");
+      ToastAndroid.show('Error occured', ToastAndroid.LONG);
     }
 }
     return(

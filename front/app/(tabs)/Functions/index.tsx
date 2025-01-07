@@ -1,15 +1,18 @@
 import { Text, View, StyleSheet,ScrollView, Button } from "react-native"
 import {Link} from "expo-router"
 import { BarChart, LineChart, PieChart, PopulationPyramid, RadarChart } from "react-native-gifted-charts";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiGetRequest, apiPostRequest } from "@/app/functions/apiRequest";
 import * as SecureStore from 'expo-secure-store';
 import RNPickerSelect from 'react-native-picker-select';
-import {formatDate, currentDay,currentWeekStart, currentWeekEnd, currentYearStart, currentYearEnd,fourYearsAgo,prevWeek,nextDay,nextWeek,nextYear,nextFourYears,prevDay, prevYear,prevFourYears} from './timeStatsManager/time'
+import {formatDate, currentDay,currentWeekStart, currentWeekEnd, currentYearStart, currentYearEnd,fourYearsAgo,
+  prevWeek,nextDay,nextWeek,nextYear,nextFourYears,prevDay,
+  prevYear,prevFourYears, generateYears} from './timeStatsManager/time'
 import {processPreferAlcoholStats, processPreferEventStats, processPreferTimeStats, processTotalAlcoholStats, processTotalPriceStats} from './timeStatsManager/stats'
 import {barDataItem} from './types'
-import MyBarChart from '../../myCharts/myBarChart'
-import Test from '../../functions/test'
+import MyBarChart from '../../customComponents/myCharts/myBarChart'
+import { useFocusEffect } from "expo-router";
+
 import { parse } from "@babel/core";
 
 const  StatsPage = () =>{
@@ -48,16 +51,12 @@ const  StatsPage = () =>{
     getStats();
   }, [timeSpan,startDate]);
 
+  useFocusEffect(
+    useCallback(() => {
+      getStats();
+    }, [])
+  )
 
-  const generateYears = () =>{
-    const Year = endDate.getFullYear() - 4;
-    let years = [Year.toString()];
-    for (let index = 1; index < 5; index++) {
-      years.push((Year + index).toString())
-    }
-    console.log(years)
-    return years;
-  }
 
   
 
@@ -144,7 +143,7 @@ const  StatsPage = () =>{
 
     else if(timeSpan === 'Year'){
       span = 'y';
-      spanArr = generateYears();
+      spanArr = generateYears(endDate);
     }
     
     const payload = {
@@ -202,6 +201,9 @@ const  StatsPage = () =>{
       setEndDateFormated(formatDate(currentYearEnd()));
     }
   }
+  useEffect(()=>{
+    timePeriod();
+  }, [timeSpan])
   
   return(
     <View style={styles.container}>
@@ -214,7 +216,7 @@ const  StatsPage = () =>{
             {
               setTimeSpan(value);
               console.log('value changed')
-              timePeriod();
+             
               console.log("timeSpan: ",timeSpan)
             }}
           
@@ -225,24 +227,7 @@ const  StatsPage = () =>{
             { label: 'Year', value: 'Year' },
         ]}
           />
-          
-          {/* <Text>Prefer alcohol in ml of pure (100%) alcohol</Text>
-          
-          <MyBarChart data={preferAlcoTypeStats}/>
-          <PieChart data={preferAlcoTypeStats}></PieChart>
-          <Text>Prefer Event in term of pure Alcohol consumption in ml</Text>
-          <MyBarChart data = {preferEventTypeStats} />
 
-          <Text>average percentage of alcohol which you drink {avgPercentage}%</Text>
-
-          <Text>prefer time to drink</Text>
-          <MyBarChart data = {preferTimeStats} />
-
-          <Text>Pure alcohol consumption</Text>
-          <MyBarChart data = {totalAlcoholStats} 
-          />
-          <Text>money which you spend for alcohol</Text>
-          <MyBarChart data = {totalAlcoholPrice} /> */}
           <Text>Prefer alcohol in ml of pure (100%) alcohol</Text>
           <MyBarChart data={preferAlcoTypeStats}></MyBarChart>
 
