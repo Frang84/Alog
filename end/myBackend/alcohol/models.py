@@ -48,13 +48,13 @@ class Event(models.Model):
         return self.name
 
 
-class Chellange(models.Model): 
-    chellangeTypeChoice = [
+class Challange(models.Model): 
+    challangeTypeChoice = [
         ('Limit', 'Limit'),
         ('Alone', 'Alone')
     ]
     user = models.ForeignKey(User, related_name='chellenges', on_delete=models.CASCADE)
     limit = models.FloatField()
-    chellangeType = models.CharField(max_length=100, choices=chellangeTypeChoice)
+    chellangeType = models.CharField(max_length=100, choices=challangeTypeChoice)
     startDate = models.DateTimeField()
     endDate = models.DateTimeField()

@@ -13,10 +13,9 @@ export default function RootLayout() {
           headerTitle: "Stats",
           title: "Stats"
         }}/>
-        <Tabs.Screen name="chellange" options={{
+        <Tabs.Screen name="challange" options={{
           headerShown: false,
-          
-          title: "Chellange"
+          title: "Challange"
         }}/>
         
         
