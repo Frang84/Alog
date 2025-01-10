@@ -16,7 +16,7 @@ const MyCalendar = (props: myCalendarProps) => {
             console.log(new Date(day['dateString']))
             props.setDateFun(day['dateString']);
             props.setVisibilityFun(props.visibility);
-            //console.log(props.visibility)
+            
         }}
         minDate={ formatDateCalendar(new Date()) }>
     </Calendar>

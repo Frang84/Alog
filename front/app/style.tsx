@@ -3,6 +3,19 @@ import{
     Touchable
   } from 'react-native';
 
+
+export const customStyleTabBar = StyleSheet.create({
+  tabBarText:{ 
+    color: "gray",
+    textDecorationColor: "#27b376",
+    
+  },
+  tabsStyle: {
+    backgroundColor: '#fff',
+    touchAction: '#27b376',
+  }
+})
+
 export const customStyleChellange = StyleSheet.create({
   nextToEachother: {
     flexDirection: 'row', // Ustawia elementy w jednym rzędzie
