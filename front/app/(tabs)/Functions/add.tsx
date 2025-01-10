@@ -3,6 +3,7 @@ import { useState } from "react"
 import {Link} from "expo-router"
 import RNPickerSelect from 'react-native-picker-select';
 import { apiPostRequest } from "@/app/functions/apiRequest";
+import {customeStyle, customStyleChellange} from '@/app/style';
 import * as SecureStore from 'expo-secure-store';
 const  AddPage = () =>{
   const [alcoholType, setalcoholType] = useState("") 
@@ -12,7 +13,7 @@ const  AddPage = () =>{
   const [percentage, setPercentage] = useState(0)
   const [eventName, setEventName] = useState("Party")
   const [brand, setBrand] = useState("")
-
+  
   const autoCompleteAlcohol = (alcoholTypeVal: string) => {
     if(alcoholTypeVal === "Bear"){
       setalcoholName("default bear")
@@ -109,7 +110,7 @@ const  AddPage = () =>{
         ]}
           />
           <Text>Alcohol name</Text>
-          <TextInput style={styles.input} 
+          <TextInput style={customStyleChellange.input}
           onChangeText={setalcoholName}
           value={alcoholName.toString()}
           ></TextInput>
@@ -118,7 +119,7 @@ const  AddPage = () =>{
 
           <Text>Price (PLN)</Text>
           <TextInput 
-          style={styles.input} 
+          style={customStyleChellange.input}
           onChangeText={(text) => setPrice(Number(text))}
           value={price.toString()}
           ></TextInput>
@@ -126,21 +127,22 @@ const  AddPage = () =>{
 
             <Text>Volume (ml)</Text>
             <TextInput 
-            style={styles.input} 
+            style={customStyleChellange.input}
             value={volume.toString()} 
             onChangeText={(text) => setVolume(Number(text))} 
             placeholder="Volume"
             />
 
           <Text>Percantage %</Text>
-          <TextInput style={styles.input}
+          <TextInput style={customStyleChellange.input}
             onChangeText={(text) => setPercentage(Number(text))}
             value={percentage.toString()}
           ></TextInput>
 
           <Text>Brand</Text>
-          <TextInput style={styles.input}
-           onChangeText={setBrand}
+          <TextInput 
+            style={customStyleChellange.input}
+            onChangeText={setBrand}
             value={brand.toString()}
            ></TextInput>
 

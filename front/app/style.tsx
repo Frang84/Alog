@@ -12,7 +12,7 @@ export const customStyleTabBar = StyleSheet.create({
   },
   tabsStyle: {
     backgroundColor: '#fff',
-    touchAction: '#27b376',
+    
   }
 })
 
@@ -36,6 +36,7 @@ input:{
   padding: 10,
   borderWidth: 1,
   borderColor: "#27b376",
+  borderRadius: 4,
 },
 
 })
