@@ -21,12 +21,21 @@ class ChallangeView(APIView):
             startDate = self.getDate(request.data.get("startDate"))        
             endDate = self.getDate(request.data.get("endDate"))
             Challange.objects.create(user=user, limit=limit, chellangeType=challangeType, startDate=startDate, endDate=endDate)
-            return Response({'message': 'Alcohol created successfully'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Challange created successfully'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return  Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def get(self, request): 
+        return Response()
+    def getChallanges(self, userId): 
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+                SELECT * FROM alcohol_challange
+                WHERE user_id = {userId}
+            """)
+            row = cursor.fetchall()
+            return row
 
-    
 
     
     def getDate(self, date, opt='s'):

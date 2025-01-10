@@ -10,7 +10,7 @@ interface MyBarChartProps {
 
 export default function MyBarChart( {data} : MyBarChartProps){
     return(
-        <View style={{paddingBottom: 30, paddingTop: 30}}>
+        <View style={{paddingBottom: 30, paddingTop: 30, margin: 5}}>
         <BarChart 
         data={data}
         barBorderRadius={4}

@@ -17,6 +17,12 @@ export const customStyleTabBar = StyleSheet.create({
 })
 
 export const customStyleChellange = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding:10,
+    //backgroundColor: 'white',
+    
+  },
   nextToEachother: {
     flexDirection: 'row', // Ustawia elementy w jednym rzędzie
     justifyContent: 'space-between', // Przestrzeń między elementami
@@ -42,41 +48,53 @@ input:{
 })
 
 export const customeStyle = StyleSheet.create({
-    touchableOpacity: {
-        padding: 10
-    },
+
+  note:{
+    
+    borderColor: '#27b376',
+    borderWidth: 1,
+    borderRadius: 4,
+    backgroundColor:'white'
+    
+  },
+
+  noteOuter:{
+    padding: 5,
+  },
+
+  touchableOpacity: {
+    padding: 10
+  },
 
 
 
-    TouchableOpacityTwo: {
-      paddingTop: 10,
-      
-    },
+  TouchableOpacityTwo: {
+    paddingTop: 10,
+  },
 
     button: {
-        color: "#27b376",
-        borderRadius: 4,
-        backgroundColor: '#27b376',
-        textAlign: 'center',
+      color: "#27b376",
+      borderRadius: 4,
+      backgroundColor: '#27b376',
+      textAlign: 'center',
     },
 
     textButton:{
-        fontSize: 18,
-        textAlign: 'center',
-        color: '#fff',
-        textTransform: 'uppercase',
+      fontSize: 18,
+      textAlign: 'center',
+      color: '#fff',
+      textTransform: 'uppercase',
         
     },
 
     container: {
-        flex: 1,
-        padding:10,
-        backgroundColor: '#f0f0f0',
-      },
+      flex: 1,
+      padding:10,
+      backgroundColor: '#f0f0f0',
+    },
 
       scrollView: {
-        flex: 1,
-       
+        flex: 1, 
         backgroundColor: '#f0f0f0',
         marginHorizontal: 20,
       },
