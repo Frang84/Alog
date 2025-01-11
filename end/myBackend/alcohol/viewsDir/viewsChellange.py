@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
-
+from django.db import connection
 from rest_framework import status
 from alcohol.models import Alcohol, Event, Challange
 import datetime
@@ -20,18 +20,41 @@ class ChallangeView(APIView):
             challangeType = request.data.get("challangeType")
             startDate = self.getDate(request.data.get("startDate"))        
             endDate = self.getDate(request.data.get("endDate"))
-            Challange.objects.create(user=user, limit=limit, chellangeType=challangeType, startDate=startDate, endDate=endDate)
+            Challange.objects.create(user=user, limitAlc=limit, chellangeType=challangeType, startDate=startDate, endDate=endDate)
             return Response({'message': 'Challange created successfully'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return  Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request): 
-        return Response()
+        
+        challanges = self.getChallanges(request.user.id)
+        challangesList = [{'startDate': row[0], 'endDate':  row[1], 'challangeType':  row[2], 'overallAlc':  row[3], 'limit': row[4]} for row in challanges]
+        return Response(
+            {
+            'challangesList': challangesList
+            }
+        )
+
+
+
     def getChallanges(self, userId): 
         with connection.cursor() as cursor:
             cursor.execute(f"""
-                SELECT * FROM alcohol_challange
-                WHERE user_id = {userId}
+            SELECT 
+                alcohol_challange.startDate,
+                alcohol_challange.endDate,
+                alcohol_challange.chellangeType,
+                IFNULL(SUM(alcohol_alcohol.volume * alcohol_alcohol.percentage / 100), 0) AS overallAlc,
+                alcohol_challange.limitAlc AS limitOfAlcohol
+            FROM alcohol_challange
+            LEFT JOIN alcohol_event 
+                ON alcohol_challange.user_id = alcohol_event.userId_id
+                AND alcohol_event.date BETWEEN alcohol_challange.startDate AND alcohol_challange.endDate
+            LEFT JOIN alcohol_alcohol  
+                ON alcohol_alcohol.id = alcohol_event.alcohol_id
+            WHERE 
+                alcohol_challange.user_id = {userId}
+            GROUP BY alcohol_challange.id;
             """)
             row = cursor.fetchall()
             return row

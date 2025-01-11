@@ -7,6 +7,10 @@ export default function RootLayout() {
         headerShown: false,
         headerTitle: "back"
       }}/>
+        <Stack.Screen name="createHangover" options={{
+        headerShown: false,
+        headerTitle: "back"
+      }}/>
     </Stack>
   );
 }

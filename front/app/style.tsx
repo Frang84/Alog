@@ -25,7 +25,7 @@ export const customStyleChellange = StyleSheet.create({
   },
   nextToEachother: {
     flexDirection: 'row', // Ustawia elementy w jednym rzędzie
-    justifyContent: 'space-between', // Przestrzeń między elementami
+    //justifyContent: 'space-between', // Przestrzeń między elementami
     alignItems: 'center', // Wyrównanie względem osi Y
     padding: 10,
   },
@@ -54,8 +54,15 @@ export const customeStyle = StyleSheet.create({
     borderColor: '#27b376',
     borderWidth: 1,
     borderRadius: 4,
-    backgroundColor:'white'
+    backgroundColor:'white',
+    shadowColor:'black',
     
+  },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
 
   noteOuter:{
@@ -85,6 +92,12 @@ export const customeStyle = StyleSheet.create({
       color: '#fff',
       textTransform: 'uppercase',
         
+    },
+    calendarButton:{
+      fontSize: 40,
+      textAlign: 'center',
+      color: '#fff',
+      textTransform: 'uppercase',
     },
 
     container: {

@@ -1,12 +1,26 @@
--- SQLite
+
+
+-- INSERT INTO alcohol_event (alcohol_id, userId_id, eventName, [date])
+-- VALUES (2, 1, 'Party', '2025-01-21 19:52:52.563038');
+
+-- DELETE FROM alcohol_event
+-- WHERE alcohol_id = 2 AND eventName = 'Party';
+
 SELECT 
-alcohol_event.id AS eventId,
-alcohol_alcohol.name AS alcoholName,
-alcohol_challange.id AS challangeId,
-SUM(alcohol_alcohol.volume * alcohol_alcohol.percentage/100) AS overallAlc
-FROM alcohol_event 
-JOIN alcohol_challange ON alcohol_challange.user_id = alcohol_event.userId_id
-JOIN alcohol_alcohol  ON alcohol_alcohol.id = alcohol_event.alcohol_id
-WHERE alcohol_event.date BETWEEN 
-alcohol_challange.startDate AND alcohol_challange.endDate
-GROUP BY alcohol_challange.id
+    alcohol_challange.startDate,
+    alcohol_challange.endDate,
+    alcohol_challange.chellangeType,
+    IFNULL(SUM(alcohol_alcohol.volume * alcohol_alcohol.percentage / 100), 0) AS overallAlc,
+    alcohol_challange.limitAlc AS limitOfAlcohol
+FROM alcohol_challange
+LEFT JOIN alcohol_event 
+    ON alcohol_challange.user_id = alcohol_event.userId_id
+    AND alcohol_event.date BETWEEN alcohol_challange.startDate AND alcohol_challange.endDate
+LEFT JOIN alcohol_alcohol  
+    ON alcohol_alcohol.id = alcohol_event.alcohol_id
+WHERE 
+    alcohol_challange.user_id = 1
+GROUP BY alcohol_challange.id;
+
+
+

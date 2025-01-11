@@ -1,10 +1,11 @@
 import { Text, View, StyleSheet,TextInput, SafeAreaView, KeyboardAvoidingView, Button, Keyboard, Alert, ToastAndroid } from "react-native"
 import { useState } from "react"
-import {Link} from "expo-router"
+import {Link, router} from "expo-router"
 import RNPickerSelect from 'react-native-picker-select';
 import { apiPostRequest } from "@/app/functions/apiRequest";
 import {customeStyle, customStyleChellange} from '@/app/style';
 import * as SecureStore from 'expo-secure-store';
+import MyButton from '../../customComponents/myButton'
 const  AddPage = () =>{
   const [alcoholType, setalcoholType] = useState("") 
   const [alcoholName, setalcoholName] = useState("")
@@ -13,6 +14,7 @@ const  AddPage = () =>{
   const [percentage, setPercentage] = useState(0)
   const [eventName, setEventName] = useState("Party")
   const [brand, setBrand] = useState("")
+  
   
   const autoCompleteAlcohol = (alcoholTypeVal: string) => {
     if(alcoholTypeVal === "Bear"){
@@ -84,8 +86,12 @@ const  AddPage = () =>{
       ToastAndroid.show('Error occured', ToastAndroid.LONG);
     }
 }
+    const goToAddHangover = () => {
+
+    }
     return(
         <View style={styles.container}>
+        
         <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
           onValueChange={(value) => 
             {
@@ -167,7 +173,7 @@ const  AddPage = () =>{
           />
 
           <Button title="Add" onPress={handleSubmit}></Button>
-            
+          <MyButton  onPressFun={() => {router.navigate('/extraScreens/createHangover')}} textToPrint='add hangover' />
         </View>
     )
 }

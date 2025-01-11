@@ -54,7 +54,7 @@ class Challange(models.Model):
         ('Alone', 'Alone')
     ]
     user = models.ForeignKey(User, related_name='chellenges', on_delete=models.CASCADE)
-    limit = models.FloatField()
+    limitAlc = models.FloatField()
     chellangeType = models.CharField(max_length=100, choices=challangeTypeChoice)
     startDate = models.DateTimeField()
     endDate = models.DateTimeField()

@@ -44,7 +44,7 @@ export const apiPostRequest = async (url: string, payload: object, accessToken: 
     }
 }
 
-export const apiGetRequest = async (url: string, payload: object, accessToken: string) => {
+export const apiGetRequest = async (url: string, accessToken: string) => {
     try {
         const response = await fetch(url, {
         method: "GET",
@@ -52,7 +52,7 @@ export const apiGetRequest = async (url: string, payload: object, accessToken: s
             "Content-Type": "application/json",
             "Authorization": 'Bearer ' + accessToken,
         },
-        body: JSON.stringify(payload),
+        
         });
 
         const data = await response.json();
