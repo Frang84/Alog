@@ -65,3 +65,25 @@ export const apiGetRequest = async (url: string, accessToken: string) => {
         throw error;
     }
 }
+
+export const apiDeleteRequest = async (url: string, payload: object, accessToken: string) => {
+    try {
+        const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + accessToken,
+        },
+        body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.details || "error occured");
+        }
+        return data;
+    }catch(error){
+        console.error("error during DELETE request", error);
+        throw error;
+    }
+}

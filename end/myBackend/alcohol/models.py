@@ -58,3 +58,13 @@ class Challange(models.Model):
     chellangeType = models.CharField(max_length=100, choices=challangeTypeChoice)
     startDate = models.DateTimeField()
     endDate = models.DateTimeField()
+
+class Hangover(models.Model): 
+    hangoverTypeChoice = [
+        ('restless night', 'restless night'),
+        ('bad mood', 'bad mood'),
+        ('indigestion', 'indigestion')
+    ]
+    user = models.ForeignKey(User, related_name='hangovers', on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    hangoverType = models.CharField(max_length=100, choices=hangoverTypeChoice)

@@ -11,3 +11,9 @@ export interface challangeItem{
   overallAlc: number;
   limit: number;
 }
+
+export interface hangoverItem{
+  id: number;
+  hangoverType: string;
+  date: string;
+}

@@ -128,4 +128,10 @@ export const customeStyle = StyleSheet.create({
         padding: 10,
         borderWidth: 1,
       },
+      delete:{
+        backgroundColor: '	#bf212f',
+        color:'	#bf212f',
+        width:40,
+        height:40
+      }
 })
