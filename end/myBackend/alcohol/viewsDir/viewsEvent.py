@@ -56,7 +56,8 @@ class EventView(APIView):
             event = Event.objects.create(
                 userId = user1,
                 eventName = request.data.get('eventName'),
-                date = datetime.datetime.now(pytz.timezone('Europe/Warsaw')),
+                
+                date = self.getDate(request.data.get("date")) ,
                 alcohol = alcohol
             )
             return Response({'message': 'Alcohol created successfully'}, status=status.HTTP_201_CREATED)
@@ -65,3 +66,12 @@ class EventView(APIView):
 
 
     
+    def getDate(self, date, opt='s'):
+        print(date)
+        ymd = date.split('-')
+        year = int(ymd[0])
+        month = int(ymd[1])
+        day = int(ymd[2])
+        if opt == 'e': 
+            return datetime.datetime(year, month, day, 23,59,59)  
+        return datetime.datetime(year, month, day)  

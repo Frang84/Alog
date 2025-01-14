@@ -136,7 +136,10 @@ const handleSubmit = async () => {
             <MyCalendar 
                 setDateFun={dateSetter} 
                 setVisibilityFun={setVisibilityFun} 
-                visibility={visibility}>
+                visibility={visibility}
+                minDate={formatDateCalendar(new Date())}
+                >
+            
             </MyCalendar>
             <Button onPress={() => setVisibility(!visibility)} title="Hide Modal"></Button>
         </Modal>

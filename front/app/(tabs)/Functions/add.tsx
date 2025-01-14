@@ -1,11 +1,17 @@
-import { Text, View, StyleSheet,TextInput, SafeAreaView, KeyboardAvoidingView, Button, Keyboard, Alert, ToastAndroid } from "react-native"
+import { Text, View, StyleSheet,TextInput,Button, ToastAndroid, TouchableOpacity, Modal } from "react-native"
 import { useState } from "react"
 import {Link, router} from "expo-router"
 import RNPickerSelect from 'react-native-picker-select';
 import { apiPostRequest } from "@/app/functions/apiRequest";
 import {customeStyle, customStyleChellange} from '@/app/style';
 import * as SecureStore from 'expo-secure-store';
-import MyButton from '../../customComponents/myButton'
+import MyButton from '../../customComponents/myButton';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MyCalendar from '../../customComponents/myCalendar'
+import { formatDateCalendar } from "./timeStatsManager/time";
+
+
+
 const  AddPage = () =>{
   const [alcoholType, setalcoholType] = useState("") 
   const [alcoholName, setalcoholName] = useState("")
@@ -14,6 +20,8 @@ const  AddPage = () =>{
   const [percentage, setPercentage] = useState(0)
   const [eventName, setEventName] = useState("Party")
   const [brand, setBrand] = useState("")
+  const [date, setDate] = useState(() => {return formatDateCalendar(new Date())})
+  const [visibility, setVisibility] = useState(false)
   
   
   const autoCompleteAlcohol = (alcoholTypeVal: string) => {
@@ -54,9 +62,15 @@ const  AddPage = () =>{
   }
   //dokoncz dopisywanie
 }
+const dateSetter = (date:string) => {
+  setDate(date);
+}
+const setVisibilityFun = (visibility: boolean) =>{
+  setVisibility(!visibility);
+}
 
   const handleSubmit = async () => {
-    console.log(alcoholType, alcoholName, price, volume, percentage, eventName)
+    console.log(alcoholType, alcoholName, price, volume, percentage, eventName, date)
     const url = 'http://10.0.2.2:8000/add'
     const payload = {
       name: alcoholName,
@@ -65,7 +79,8 @@ const  AddPage = () =>{
       volume: volume,
       percentage: percentage,
       eventName: eventName,
-      brand: brand
+      brand: brand,
+      date: date
     };
     const dateToken = await SecureStore.getItemAsync("DateToken");
     let accessToken = '';
@@ -86,8 +101,11 @@ const  AddPage = () =>{
       ToastAndroid.show('Error occured', ToastAndroid.LONG);
     }
 }
-    const goToAddHangover = () => {
-
+    const minDateCounter = () => {
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const dateMinus2Years = new Date(new Date().setFullYear(currentYear - 2));
+      return dateMinus2Years;
     }
     return(
         <View style={styles.container}>
@@ -115,6 +133,32 @@ const  AddPage = () =>{
           { label: 'Other', value: 'Other' },
         ]}
           />
+          <Text>Date</Text>
+          <View style={customStyleChellange.nextToEachother}>
+            <TextInput style={customStyleChellange.input} editable={false}>{date}</TextInput>
+            <TouchableOpacity  
+            onPress={() => {
+                setVisibility(!visibility)
+                
+                }}>
+                <View style={customeStyle.button}>    
+                    <Ionicons name="calendar"   style={customeStyle.calendarButton}/>
+                </View>
+            </TouchableOpacity>
+          </View>
+          <Modal 
+            transparent={true}
+            visible={visibility}
+            animationType="slide">
+            <MyCalendar 
+                setDateFun={dateSetter} 
+                setVisibilityFun={setVisibilityFun} 
+                visibility={visibility}
+                minDate={formatDateCalendar(minDateCounter())}
+                >
+            </MyCalendar>
+            <Button onPress={() => setVisibility(!visibility)} title="Hide Modal"></Button>
+        </Modal>
           <Text>Alcohol name</Text>
           <TextInput style={customStyleChellange.input}
           onChangeText={setalcoholName}
