@@ -16,6 +16,7 @@ export default function MyBarChart( {data} : MyBarChartProps){
         barBorderRadius={4}
         barWidth={22}
         spacing={40}
+        
         yAxisThickness={0}
         xAxisThickness={0}
         isAnimated

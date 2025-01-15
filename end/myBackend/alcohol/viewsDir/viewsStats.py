@@ -17,9 +17,7 @@ class StatsView(APIView):
         startDate = str(self.getDate(request.data.get('startDate')))
         endDate = str(self.getDate(request.data.get('endDate'), 'e')) 
         timeSpan = str(request.data.get('timeSpan'))
-        print("Startdate", startDate)
-        print("EndDate",endDate)
-        print('timeSpan ', timeSpan)
+
         totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict[timeSpan], startDate, endDate)
         totalAlcoholPriceStats = [{ 'period': row[0], 'totalPrice': row[1], 'totalAlcohol': row[2]} for row in totalAlcoholPriceStats]
 
@@ -37,6 +35,9 @@ class StatsView(APIView):
 
         drinkingHoursStats = self.drinkingHours(request.user.id, startDate, endDate)
         drinkingHoursStats = [{'time': row[0],'volume':  row[1]} for row in drinkingHoursStats]
+
+        hangoversStats = self.hangovers(request.user.id, startDate, endDate)
+        hangoversStats = [{'hangoverType': row[0], 'count': row[1]} for row in hangoversStats]
         
         return Response(
             {
@@ -46,11 +47,11 @@ class StatsView(APIView):
                 "preferedEventTypeStats": preferedEventTypeStats,
                 "drinkingHoursStats": drinkingHoursStats,
                 "totalAlcoholConsumption": totalAlcoholConsumption,
+                'hangoverStats': hangoversStats
             }
         )
 
     def totalAlcoholPrice(self, userId, groupBy, startDate, endDate): 
-        
         '''funckaj wylicza calkowity alkohol i cene dla kazdego dnia w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
             cursor.execute(f"""
@@ -63,6 +64,7 @@ class StatsView(APIView):
             """)
             row = cursor.fetchall()
             return row
+
     def preferedAlcoType(self, userId, startDate, endDate): 
         '''oblicza jaki udzial procentowy po przeliczeniu na czysty spirytus ma dany typ alkocholu w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
@@ -127,7 +129,17 @@ class StatsView(APIView):
             row = cursor.fetchall()
             return row
     
-
+    def hangovers(self, userId, startDate, endDate): 
+        '''zwraca ilosc kacy'''
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+                SELECT h.hangoverType, COUNT(h.hangoverType)
+                FROM alcohol_hangover AS h
+                WHERE user_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+                GROUP BY h.hangoverType
+            """)
+            row = cursor.fetchall()
+            return row
  
         
         

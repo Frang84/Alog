@@ -31,3 +31,11 @@ WHERE alcohol_event.userId_id = 1 AND date BETWEEN "2025-01-08 17:32:26.866293" 
 
 
 
+
+SELECT h.hangoverType, COUNT(h.hangoverType)
+FROM alcohol_hangover AS h
+WHERE user_id = 1 AND date BETWEEN "2025-01-08 17:32:26.866293" AND "2025-01-15 17:32:26.866293"
+GROUP BY h.hangoverType
+
+
+

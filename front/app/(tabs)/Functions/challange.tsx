@@ -33,6 +33,21 @@ const ChallangeScreen = () =>{
           }
         }
       }
+    const statusOfChallange = (startDate: Date, endDate: Date, limit: number, overallAlc: number) => {
+      const today = new Date()
+      if(limit < overallAlc){
+        return "failed";
+      }
+       if(new Date(endDate) > today && new Date(startDate) < today){
+        return "in progress";
+      }
+       if(new Date(startDate) > today){
+        return 'start in future';
+      }
+      else{ 
+        return "succeeded";
+      }
+    } 
     return(
         
             <View style={customStyleChellange.container}>
@@ -48,7 +63,8 @@ const ChallangeScreen = () =>{
                                 <Text>start Date: {formatDate(new Date(item.startDate))}</Text>
                                 <Text>end Date: {formatDate(new Date(item.endDate))}</Text>
                                 <Text>limit : {item.limit} {(item.challangeType === 'Alone') ? "(times)" : "(ml of 100% alcohol)"}</Text>
-                                <Text>how much you drinked already: {item.overallAlc} (ml od 100% alcohol)</Text>  
+                                <Text>how much you drinked already: {item.overallAlc} (ml of 100% alcohol)</Text>  
+                                <Text>Status: {statusOfChallange(item.startDate, item.endDate, item.limit, item.overallAlc)}</Text>
                             </View>
                         </View>
                     );

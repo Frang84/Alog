@@ -102,3 +102,18 @@ export const processTotalAlcoholStats = (data: {period: string, totalAlcohol: nu
     });
     return barData;
   }
+
+  export const proccessHangovers = (data: {hangoverType: string, count: number}[]) => {
+    const types: string[] = ['indigestion', 'restless night	', 'bad mood', 'restless night']
+    let barData = types.map((label) => ({
+      label: label,
+      frontColor: '#006f3c',
+      value: 0
+    }))
+    data.forEach((item) => {
+      const type = item.hangoverType;
+      const index = barData.findIndex((item) => item.label === type);
+      barData[index].value = item.count
+    })
+    return barData;
+  }

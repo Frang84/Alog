@@ -8,7 +8,9 @@ import RNPickerSelect from 'react-native-picker-select';
 import {formatDate, currentDay,currentWeekStart, currentWeekEnd, currentYearStart, currentYearEnd,fourYearsAgo,
   prevWeek,nextDay,nextWeek,nextYear,nextFourYears,prevDay,
   prevYear,prevFourYears, generateYears} from './timeStatsManager/time'
-import {processPreferAlcoholStats, processPreferEventStats, processPreferTimeStats, processTotalAlcoholStats, processTotalPriceStats} from './timeStatsManager/stats'
+import {processPreferAlcoholStats, processPreferEventStats, processPreferTimeStats, processTotalAlcoholStats, processTotalPriceStats
+  ,proccessHangovers
+} from './timeStatsManager/stats'
 import {barDataItem} from './types'
 import MyBarChart from '../../customComponents/myCharts/myBarChart'
 import { useFocusEffect } from "expo-router";
@@ -40,6 +42,7 @@ const  StatsPage = () =>{
   const [preferTimeStats, setPreferTimeStats] = useState<barDataItem[]>([]);
   const [totalAlcoholStats, settotalAlcoholStats] = useState<barDataItem[]>([]);
   const [totalAlcoholPrice, setTotalAlcoholPrice] = useState<barDataItem[]>([]);
+  const [hangovers, setHengovers] =  useState<barDataItem[]>([]);
   const [totalAlcohol, setTotalAlcohol] = useState('')
   const [timeSpan, setTimeSpan] = useState('Week');
  
@@ -168,6 +171,7 @@ const  StatsPage = () =>{
         setPreferTimeStats(processPreferTimeStats(data["drinkingHoursStats"]));
         settotalAlcoholStats(processTotalAlcoholStats(data["totalAlcoholPriceStats"], spanArr, span));
         setTotalAlcoholPrice(processTotalPriceStats(data["totalAlcoholPriceStats"], spanArr, span ));
+        setHengovers(proccessHangovers(data["hangoverStats"]))
       } catch (error) {
         console.error("Error occured", error);
       }
@@ -230,7 +234,7 @@ const  StatsPage = () =>{
             { label: 'Year', value: 'Year' },
         ]}/>
 
-          <Text>Total alcohol consumption: {totalAlcohol} in ml of pure (100%) alcohol</Text>
+          <Text>Total alcohol consumption: {totalAlcohol} ml of pure (100%) alcohol</Text>
 
           <Text>Prefer alcohol in ml of pure (100%) alcohol</Text>
           <MyBarChart data={preferAlcoTypeStats}></MyBarChart>
@@ -246,6 +250,9 @@ const  StatsPage = () =>{
 
           <Text>money which you spend on alcohol</Text>
           <MyBarChart data={totalAlcoholPrice}></MyBarChart>
+
+          <Text>count of hangovers by types</Text>
+          <MyBarChart data={hangovers}></MyBarChart>
 
       </ScrollView>
     </View>
