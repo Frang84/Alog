@@ -10,9 +10,17 @@ export function formatDateCalendar(date:Date){
   let year = date.getFullYear(); // Rok
   return `${year}-${month}-${day}`;
 }
-  export function currentDay(){
-    return new Date();
-  }
+
+export function formatTime(date: Date){
+  let hour = String(date.getHours()).padStart(2, '0');
+  let minute = String(date.getMinutes()).padStart(2, '0');
+  return `${hour}:${minute}`;
+}
+
+
+export function currentDay(){
+  return new Date();
+}
   
   export function currentWeekStart(){
     let now = new Date();

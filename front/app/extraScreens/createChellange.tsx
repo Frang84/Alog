@@ -22,7 +22,12 @@ const CreateScreen = () =>{
     const [dateSetter, setDateSetter] = useState(() => (date: string) => {
         setStartDate(date);
     })
-
+    const minDateCounter = () => {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const dateMinus2Years = new Date(new Date().setFullYear(currentYear - 2));
+        return dateMinus2Years;
+      }
 
     const handleSubmit = async () => { 
         const url = 'http://10.0.2.2:8000/challanges'
@@ -70,7 +75,9 @@ const CreateScreen = () =>{
                 <MyCalendar 
                 setDateFun={dateSetter} 
                 setVisibilityFun={setVisibilityFun} 
-                visibility={visibility}>
+                visibility={visibility}
+                minDate={formatDateCalendar(minDateCounter())}
+                >
                 </MyCalendar>
                 <Button onPress={() => setVisibility(!visibility)} title="Hide Modal"></Button>
             </Modal>

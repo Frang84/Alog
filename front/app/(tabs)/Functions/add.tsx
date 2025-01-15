@@ -1,15 +1,16 @@
 import { Text, View, StyleSheet,TextInput,Button, ToastAndroid, TouchableOpacity, Modal } from "react-native"
-import { useState } from "react"
-import {Link, router} from "expo-router"
+import { useEffect, useState } from "react"
+import {Link, router, useFocusEffect} from "expo-router"
 import RNPickerSelect from 'react-native-picker-select';
 import { apiPostRequest } from "@/app/functions/apiRequest";
 import {customeStyle, customStyleChellange} from '@/app/style';
 import * as SecureStore from 'expo-secure-store';
 import MyButton from '../../customComponents/myButton';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import AntDesign from "@expo/vector-icons/AntDesign";
 import MyCalendar from '../../customComponents/myCalendar'
-import { formatDateCalendar } from "./timeStatsManager/time";
-
+import { formatDateCalendar, formatTime } from "./timeStatsManager/time";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const  AddPage = () =>{
@@ -21,7 +22,38 @@ const  AddPage = () =>{
   const [eventName, setEventName] = useState("Party")
   const [brand, setBrand] = useState("")
   const [date, setDate] = useState(() => {return formatDateCalendar(new Date())})
+  const [timeFormated, setTimeFormated] = useState(() => {return formatTime(new Date())})
+  const [time, setTime] = useState(new Date())
   const [visibility, setVisibility] = useState(false)
+  const [showPicker, setShowPicker] = useState(false)
+  const [timestamp, setTimestamp] = useState(Date.now());
+
+
+  useEffect(()=>{
+    setTimeFormated(formatTime(time))
+  } ,[time])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Odświeżaj wartość lub wykonaj dowolną akcję co 2 minuty
+      setTimestamp(Date.now());
+      setTimeFormated(formatTime(new Date()))
+    }, 120_000); // 120000 ms = 2 minuty
+
+    return () => clearInterval(interval); // Wyczyść interval po odmontowaniu komponentu
+  }, []);
+
+  const onChange = ({type }: any, selectedTime: any) => {
+    if(type === "set"){
+      const currentTime = selectedTime;
+      setTime(selectedTime);
+      
+      setShowPicker(!showPicker)
+    }
+    else{
+      setShowPicker(!showPicker);
+    }
+  }
   
   
   const autoCompleteAlcohol = (alcoholTypeVal: string) => {
@@ -80,7 +112,8 @@ const setVisibilityFun = (visibility: boolean) =>{
       percentage: percentage,
       eventName: eventName,
       brand: brand,
-      date: date
+      date: date,
+      time: timeFormated
     };
     const dateToken = await SecureStore.getItemAsync("DateToken");
     let accessToken = '';
@@ -107,6 +140,8 @@ const setVisibilityFun = (visibility: boolean) =>{
       const dateMinus2Years = new Date(new Date().setFullYear(currentYear - 2));
       return dateMinus2Years;
     }
+
+
     return(
         <View style={styles.container}>
         
@@ -145,7 +180,34 @@ const setVisibilityFun = (visibility: boolean) =>{
                     <Ionicons name="calendar"   style={customeStyle.calendarButton}/>
                 </View>
             </TouchableOpacity>
+
           </View>
+
+
+          <Text>Time</Text>
+          <View style={customStyleChellange.nextToEachother}>
+            <TextInput style={customStyleChellange.input} editable={false}>{timeFormated}</TextInput>
+            <TouchableOpacity  
+            onPress={() => {
+                setShowPicker(!showPicker)
+                
+                }}>
+                <View style={customeStyle.button}>    
+                    <AntDesign name="clockcircleo"   style={customeStyle.calendarButton}/>
+                </View>
+            </TouchableOpacity>
+            {showPicker && <DateTimePicker
+              mode="time"
+              display="spinner"
+              value={time}
+              onChange={onChange}
+              timeZoneName={'Europe/Warsaw'}
+              is24Hour={true}
+            ></DateTimePicker>}
+          </View>
+
+
+
           <Modal 
             transparent={true}
             visible={visibility}
@@ -159,6 +221,7 @@ const setVisibilityFun = (visibility: boolean) =>{
             </MyCalendar>
             <Button onPress={() => setVisibility(!visibility)} title="Hide Modal"></Button>
         </Modal>
+          
           <Text>Alcohol name</Text>
           <TextInput style={customStyleChellange.input}
           onChangeText={setalcoholName}

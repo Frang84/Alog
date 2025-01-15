@@ -57,7 +57,7 @@ class EventView(APIView):
                 userId = user1,
                 eventName = request.data.get('eventName'),
                 
-                date = self.getDate(request.data.get("date")) ,
+                date = self.getDate(request.data.get("date"), request.data.get("time")) ,
                 alcohol = alcohol
             )
             return Response({'message': 'Alcohol created successfully'}, status=status.HTTP_201_CREATED)
@@ -66,14 +66,17 @@ class EventView(APIView):
 
 
     
-    def getDate(self, date, opt='s'):
+    def getDate(self, date, time, opt='s'):
         currentTime = datetime.datetime.now()
         ymd = date.split('-')
         year = int(ymd[0])
         month = int(ymd[1])
         day = int(ymd[2])
-        hour = currentTime.hour
-        minute = currentTime.minute
+        hs = time.split(':')
+        hour = int(hs[0])
+        minute = int(hs[1])
         if opt == 'e': 
             return datetime.datetime(year, month, day, 23,59,59)  
         return datetime.datetime(year, month, day, hour, minute)  
+
+    
