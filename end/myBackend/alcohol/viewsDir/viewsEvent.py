@@ -67,11 +67,13 @@ class EventView(APIView):
 
     
     def getDate(self, date, opt='s'):
-        print(date)
+        currentTime = datetime.datetime.now()
         ymd = date.split('-')
         year = int(ymd[0])
         month = int(ymd[1])
         day = int(ymd[2])
+        hour = currentTime.hour
+        minute = currentTime.minute
         if opt == 'e': 
             return datetime.datetime(year, month, day, 23,59,59)  
-        return datetime.datetime(year, month, day)  
+        return datetime.datetime(year, month, day, hour, minute)  
