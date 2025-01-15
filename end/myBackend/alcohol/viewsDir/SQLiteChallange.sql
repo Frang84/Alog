@@ -24,3 +24,10 @@ GROUP BY alcohol_challange.id;
 
 
 
+SELECT SUM(volume * percentage/100)  
+FROM alcohol_event 
+INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+WHERE alcohol_event.userId_id = 1 AND date BETWEEN "2025-01-08 17:32:26.866293" AND  "2025-01-15 17:32:26.866293"
+
+
+

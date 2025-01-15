@@ -30,6 +30,8 @@ class StatsView(APIView):
 
         avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)[0][0]
 
+        totalAlcoholConsumption = self.totalAlcoholConsumption(request.user.id, startDate, endDate)[0][0]
+
         preferedEventTypeStats = self.preferedEventType(request.user.id, startDate, endDate)
         preferedEventTypeStats = [ {'eventType': row[0], 'volume':  row[1]} for row in preferedEventTypeStats]
 
@@ -42,7 +44,8 @@ class StatsView(APIView):
                 "preferAlcoTypeStats": preferAlcoTypeStats,
                 "avgAlcoholPercentageStats": avgAlcoholPercentageStats,
                 "preferedEventTypeStats": preferedEventTypeStats,
-                "drinkingHoursStats": drinkingHoursStats
+                "drinkingHoursStats": drinkingHoursStats,
+                "totalAlcoholConsumption": totalAlcoholConsumption,
             }
         )
 
@@ -96,6 +99,17 @@ class StatsView(APIView):
             FROM alcohol_event 
             INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
             WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            """)
+            row = cursor.fetchall()
+            return row
+    
+    def totalAlcoholConsumption(self, userId, startDate, endDate):
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+                SELECT SUM(volume * percentage/100)  
+                FROM alcohol_event 
+                INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+                WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
             """)
             row = cursor.fetchall()
             return row

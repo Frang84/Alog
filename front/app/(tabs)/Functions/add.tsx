@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet,TextInput,Button, ToastAndroid, TouchableOpacity, Modal } from "react-native"
+import { Text, View, StyleSheet,TextInput,Button, ToastAndroid, TouchableOpacity, Modal, ScrollView } from "react-native"
 import { useEffect, useState } from "react"
 import {Link, router, useFocusEffect} from "expo-router"
 import RNPickerSelect from 'react-native-picker-select';
@@ -11,6 +11,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MyCalendar from '../../customComponents/myCalendar'
 import { formatDateCalendar, formatTime } from "./timeStatsManager/time";
 import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 const  AddPage = () =>{
@@ -35,12 +36,12 @@ const  AddPage = () =>{
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Odświeżaj wartość lub wykonaj dowolną akcję co 2 minuty
+      
       setTimestamp(Date.now());
       setTimeFormated(formatTime(new Date()))
-    }, 120_000); // 120000 ms = 2 minuty
+    }, 120_000); 
 
-    return () => clearInterval(interval); // Wyczyść interval po odmontowaniu komponentu
+    return () => clearInterval(interval); 
   }, []);
 
   const onChange = ({type }: any, selectedTime: any) => {
@@ -125,8 +126,8 @@ const setVisibilityFun = (visibility: boolean) =>{
     }
     try {
       const data = await apiPostRequest(url, payload, accessToken);
-      console.log("Success", `user loggedin:`,data);
-      ToastAndroid.show('Element added successfully', ToastAndroid.LONG);
+      console.log("Success",data);
+      ToastAndroid.show(`${data['message']}`, ToastAndroid.LONG);
       
     } catch (error) {
       console.error("Error occured:", error);
@@ -143,145 +144,146 @@ const setVisibilityFun = (visibility: boolean) =>{
 
 
     return(
-        <View style={styles.container}>
-        
-        <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
-          onValueChange={(value) => 
-            {
-              console.log(value)
-              setalcoholType(value)
-              autoCompleteAlcohol(value)
-            }}
-          placeholder={{ label: 'Alcohol Type', value: null }}
-          items={[
-          { label: 'Bear', value: 'Bear' },
-          { label: 'Vodka', value: 'Vodka' },
-          { label: 'Wine', value: 'Wine' },
-          { label: 'Whiskey', value: 'Whiskey' },
-          { label: 'Liqueur', value: 'Liqueur' },
-          { label: 'Cider', value: 'Cider' },
-          { label: 'Rum', value: 'Rum' },
-          { label: 'Gin', value: 'Gin' },
-          { label: 'Brandy', value: 'Brandy' },
-          { label: 'Tequila', value: 'Tequila' },
-          { label: 'Cognac', value: 'Cognac' },
-          { label: 'Other', value: 'Other' },
-        ]}
-          />
-          <Text>Date</Text>
-          <View style={customStyleChellange.nextToEachother}>
-            <TextInput style={customStyleChellange.input} editable={false}>{date}</TextInput>
-            <TouchableOpacity  
-            onPress={() => {
-                setVisibility(!visibility)
-                
-                }}>
-                <View style={customeStyle.button}>    
-                    <Ionicons name="calendar"   style={customeStyle.calendarButton}/>
-                </View>
-            </TouchableOpacity>
+        <ScrollView >
+          <View style={styles.container}>
+          <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
+            onValueChange={(value) => 
+              {
+                console.log(value)
+                setalcoholType(value)
+                autoCompleteAlcohol(value)
+              }}
+            placeholder={{ label: 'Alcohol Type', value: null }}
+            items={[
+            { label: 'Bear', value: 'Bear' },
+            { label: 'Vodka', value: 'Vodka' },
+            { label: 'Wine', value: 'Wine' },
+            { label: 'Whiskey', value: 'Whiskey' },
+            { label: 'Liqueur', value: 'Liqueur' },
+            { label: 'Cider', value: 'Cider' },
+            { label: 'Rum', value: 'Rum' },
+            { label: 'Gin', value: 'Gin' },
+            { label: 'Brandy', value: 'Brandy' },
+            { label: 'Tequila', value: 'Tequila' },
+            { label: 'Cognac', value: 'Cognac' },
+            { label: 'Other', value: 'Other' },
+          ]}
+            />
+            <Text>Date</Text>
+            <View style={customStyleChellange.nextToEachother}>
+              <TextInput style={customStyleChellange.input} editable={false}>{date}</TextInput>
+              <TouchableOpacity  
+              onPress={() => {
+                  setVisibility(!visibility)
+                  
+                  }}>
+                  <View style={customeStyle.button}>    
+                      <Ionicons name="calendar"   style={customeStyle.calendarButton}/>
+                  </View>
+              </TouchableOpacity>
 
-          </View>
-
-
-          <Text>Time</Text>
-          <View style={customStyleChellange.nextToEachother}>
-            <TextInput style={customStyleChellange.input} editable={false}>{timeFormated}</TextInput>
-            <TouchableOpacity  
-            onPress={() => {
-                setShowPicker(!showPicker)
-                
-                }}>
-                <View style={customeStyle.button}>    
-                    <AntDesign name="clockcircleo"   style={customeStyle.calendarButton}/>
-                </View>
-            </TouchableOpacity>
-            {showPicker && <DateTimePicker
-              mode="time"
-              display="spinner"
-              value={time}
-              onChange={onChange}
-              timeZoneName={'Europe/Warsaw'}
-              is24Hour={true}
-            ></DateTimePicker>}
-          </View>
+            </View>
 
 
-
-          <Modal 
-            transparent={true}
-            visible={visibility}
-            animationType="slide">
-            <MyCalendar 
-                setDateFun={dateSetter} 
-                setVisibilityFun={setVisibilityFun} 
-                visibility={visibility}
-                minDate={formatDateCalendar(minDateCounter())}
-                >
-            </MyCalendar>
-            <Button onPress={() => setVisibility(!visibility)} title="Hide Modal"></Button>
-        </Modal>
-          
-          <Text>Alcohol name</Text>
-          <TextInput style={customStyleChellange.input}
-          onChangeText={setalcoholName}
-          value={alcoholName.toString()}
-          ></TextInput>
+            <Text>Time</Text>
+            <View style={customStyleChellange.nextToEachother}>
+              <TextInput style={customStyleChellange.input} editable={false}>{timeFormated}</TextInput>
+              <TouchableOpacity  
+              onPress={() => {
+                  setShowPicker(!showPicker)
+                  
+                  }}>
+                  <View style={customeStyle.button}>    
+                      <AntDesign name="clockcircleo"   style={customeStyle.calendarButton}/>
+                  </View>
+              </TouchableOpacity>
+              {showPicker && <DateTimePicker
+                mode="time"
+                display="spinner"
+                value={time}
+                onChange={onChange}
+                timeZoneName={'Europe/Warsaw'}
+                is24Hour={true}
+              ></DateTimePicker>}
+            </View>
 
 
 
-          <Text>Price (PLN)</Text>
-          <TextInput 
-          style={customStyleChellange.input}
-          onChangeText={(text) => setPrice(Number(text))}
-          value={price.toString()}
-          ></TextInput>
+            <Modal 
+              transparent={true}
+              visible={visibility}
+              animationType="slide">
+              <MyCalendar 
+                  setDateFun={dateSetter} 
+                  setVisibilityFun={setVisibilityFun} 
+                  visibility={visibility}
+                  minDate={formatDateCalendar(minDateCounter())}
+                  >
+              </MyCalendar>
+              <Button onPress={() => setVisibility(!visibility)} title="Hide Modal"></Button>
+          </Modal>
+            
+            <Text>Alcohol name</Text>
+            <TextInput style={customStyleChellange.input}
+            onChangeText={setalcoholName}
+            value={alcoholName.toString()}
+            ></TextInput>
 
 
-            <Text>Volume (ml)</Text>
+
+            <Text>Price (PLN)</Text>
             <TextInput 
             style={customStyleChellange.input}
-            value={volume.toString()} 
-            onChangeText={(text) => setVolume(Number(text))} 
-            placeholder="Volume"
+            onChangeText={(text) => setPrice(Number(text))}
+            value={price.toString()}
+            ></TextInput>
+
+
+              <Text>Volume (ml)</Text>
+              <TextInput 
+              style={customStyleChellange.input}
+              value={volume.toString()} 
+              onChangeText={(text) => setVolume(Number(text))} 
+              placeholder="Volume"
+              />
+
+            <Text>Percantage %</Text>
+            <TextInput style={customStyleChellange.input}
+              onChangeText={(text) => setPercentage(Number(text))}
+              value={percentage.toString()}
+            ></TextInput>
+
+            <Text>Brand</Text>
+            <TextInput 
+              style={customStyleChellange.input}
+              onChangeText={setBrand}
+              value={brand.toString()}
+            ></TextInput>
+
+            <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
+            onValueChange={(value) => 
+              {
+                console.log(value)
+                setEventName(value)
+              }}
+            placeholder={{ label: 'Party', value: 'Party' }}
+            
+            items={[
+            { label: 'Alone', value: 'Alone' },
+            { label: 'Wedding', value: 'Wedding' },
+            { label: 'Birthday', value: 'Birthday' },
+            { label: 'Meeting with friend', value: 'Meeting with friend' },
+            { label: 'Work meeting', value: 'Work meeting' },
+            { label: 'Date', value: 'Date' },
+            { label: 'Other', value: 'Other' },
+            
+          ]}
             />
 
-          <Text>Percantage %</Text>
-          <TextInput style={customStyleChellange.input}
-            onChangeText={(text) => setPercentage(Number(text))}
-            value={percentage.toString()}
-          ></TextInput>
-
-          <Text>Brand</Text>
-          <TextInput 
-            style={customStyleChellange.input}
-            onChangeText={setBrand}
-            value={brand.toString()}
-           ></TextInput>
-
-          <RNPickerSelect style={{ inputIOS: styles.input, inputAndroid: styles.inputAndroid }}
-          onValueChange={(value) => 
-            {
-              console.log(value)
-              setEventName(value)
-            }}
-          placeholder={{ label: 'Party', value: 'Party' }}
-          
-          items={[
-          { label: 'Alone', value: 'Alone' },
-          { label: 'Wedding', value: 'Wedding' },
-          { label: 'Birthday', value: 'Birthday' },
-          { label: 'Meeting with friend', value: 'Meeting with friend' },
-          { label: 'Work meeting', value: 'Work meeting' },
-          { label: 'Date', value: 'Date' },
-          { label: 'Other', value: 'Other' },
-          
-        ]}
-          />
-
-          <Button title="Add" onPress={handleSubmit}></Button>
-          <MyButton  onPressFun={() => {router.navigate('/extraScreens/createHangover')}} textToPrint='add hangover' />
-        </View>
+            <Button title="Add" onPress={handleSubmit}></Button>
+            <MyButton  onPressFun={() => {router.navigate('/extraScreens/createHangover')}} textToPrint='add hangover' />
+          </View>
+        </ScrollView>
     )
 }
 export default AddPage;

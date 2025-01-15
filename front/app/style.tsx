@@ -27,7 +27,7 @@ export const customStyleChellange = StyleSheet.create({
     flexDirection: 'row', // Ustawia elementy w jednym rzędzie
     //justifyContent: 'space-between', // Przestrzeń między elementami
     alignItems: 'center', // Wyrównanie względem osi Y
-    padding: 10,
+    //padding: 10,
   },
   button: {
     flex: 1, // Przydziela równą szerokość obu przyciskom (opcjonalne)

@@ -40,6 +40,7 @@ const  StatsPage = () =>{
   const [preferTimeStats, setPreferTimeStats] = useState<barDataItem[]>([]);
   const [totalAlcoholStats, settotalAlcoholStats] = useState<barDataItem[]>([]);
   const [totalAlcoholPrice, setTotalAlcoholPrice] = useState<barDataItem[]>([]);
+  const [totalAlcohol, setTotalAlcohol] = useState('')
   const [timeSpan, setTimeSpan] = useState('Week');
  
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -161,6 +162,8 @@ const  StatsPage = () =>{
         setPreferAlcoTypeStats(processPreferAlcoholStats(data["preferAlcoTypeStats"]));
         let avgAlcPer = (data["avgAlcoholPercentageStats"] !== null) ? data["avgAlcoholPercentageStats"].toString().substring(0,5) : '0.0';
         setAvgPercentage(avgAlcPer);
+        let totalAlcohol = (data["totalAlcoholConsumption"] !== null) ? data["totalAlcoholConsumption"].toString().substring(0,5) : '0.0';
+        setTotalAlcohol(totalAlcohol);
         setPreferEventTypeStats(processPreferEventStats(data["preferedEventTypeStats"]));
         setPreferTimeStats(processPreferTimeStats(data["drinkingHoursStats"]));
         settotalAlcoholStats(processTotalAlcoholStats(data["totalAlcoholPriceStats"], spanArr, span));
@@ -226,6 +229,8 @@ const  StatsPage = () =>{
             { label: 'Month', value: 'Month' },
             { label: 'Year', value: 'Year' },
         ]}/>
+
+          <Text>Total alcohol consumption: {totalAlcohol} in ml of pure (100%) alcohol</Text>
 
           <Text>Prefer alcohol in ml of pure (100%) alcohol</Text>
           <MyBarChart data={preferAlcoTypeStats}></MyBarChart>
