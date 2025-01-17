@@ -141,7 +141,7 @@ class StatsView(APIView):
             row = cursor.fetchall()
             return row
  
-        
+
         
 
     def getDate(self, date, opt='s'):
