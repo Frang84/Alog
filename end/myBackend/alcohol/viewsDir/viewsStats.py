@@ -6,9 +6,18 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from django.db import connection
 from rest_framework import status
-from alcohol.models import Alcohol, Event
+from alcohol.modelsDir.models import Alcohol, Event
 import datetime
 import json 
+from alcohol.modelsDir.stats import (
+    totalAlcoholPrice,
+    preferedAlcoType,
+    avgAlcoholPercentage,
+    totalAlcoholConsumption,
+    preferedEventType,
+    drinkingHours,
+    hangovers
+)
 class StatsView(APIView):
     permission_classes = [IsAuthenticated]
     __groupByDict = {'Day' : "STRFTIME('%H', date)",'Week' : "STRFTIME('%d-%m-%Y', date)", 'Month' : "STRFTIME('%m', date)", 'Year' : "STRFTIME('%Y', date)"}
@@ -18,25 +27,25 @@ class StatsView(APIView):
         endDate = str(self.getDate(request.data.get('endDate'), 'e')) 
         timeSpan = str(request.data.get('timeSpan'))
 
-        totalAlcoholPriceStats = self.totalAlcoholPrice(request.user.id, self.__groupByDict[timeSpan], startDate, endDate)
+        totalAlcoholPriceStats = totalAlcoholPrice(request.user.id, self.__groupByDict[timeSpan], startDate, endDate)
         totalAlcoholPriceStats = [{ 'period': row[0], 'totalPrice': row[1], 'totalAlcohol': row[2]} for row in totalAlcoholPriceStats]
 
 
-        preferAlcoTypeStats = self.preferedAlcoType(request.user.id, startDate, endDate)
+        preferAlcoTypeStats = preferedAlcoType(request.user.id, startDate, endDate)
         preferAlcoTypeStats = [{'alcoholType' : row[0], 'volume':  row[1]} for row in preferAlcoTypeStats]
 
 
-        avgAlcoholPercentageStats = self.avgAlcoholPercentage(request.user.id, startDate, endDate)[0][0]
+        avgAlcoholPercentageStats = avgAlcoholPercentage(request.user.id, startDate, endDate)[0][0]
 
-        totalAlcoholConsumption = self.totalAlcoholConsumption(request.user.id, startDate, endDate)[0][0]
+        totalAlcoholConsumption1 = totalAlcoholConsumption(request.user.id, startDate, endDate)[0][0]
 
-        preferedEventTypeStats = self.preferedEventType(request.user.id, startDate, endDate)
+        preferedEventTypeStats = preferedEventType(request.user.id, startDate, endDate)
         preferedEventTypeStats = [ {'eventType': row[0], 'volume':  row[1]} for row in preferedEventTypeStats]
 
-        drinkingHoursStats = self.drinkingHours(request.user.id, startDate, endDate)
+        drinkingHoursStats = drinkingHours(request.user.id, startDate, endDate)
         drinkingHoursStats = [{'time': row[0],'volume':  row[1]} for row in drinkingHoursStats]
 
-        hangoversStats = self.hangovers(request.user.id, startDate, endDate)
+        hangoversStats = hangovers(request.user.id, startDate, endDate)
         hangoversStats = [{'hangoverType': row[0], 'count': row[1]} for row in hangoversStats]
         
         return Response(
@@ -46,100 +55,12 @@ class StatsView(APIView):
                 "avgAlcoholPercentageStats": avgAlcoholPercentageStats,
                 "preferedEventTypeStats": preferedEventTypeStats,
                 "drinkingHoursStats": drinkingHoursStats,
-                "totalAlcoholConsumption": totalAlcoholConsumption,
+                "totalAlcoholConsumption": totalAlcoholConsumption1,
                 'hangoverStats': hangoversStats
             }
         )
 
-    def totalAlcoholPrice(self, userId, groupBy, startDate, endDate): 
-        '''funckaj wylicza calkowity alkohol i cene dla kazdego dnia w podanym przedziale czasowym'''
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-            SELECT  {groupBy}, SUM(price) as totalPrice, SUM(volume * percentage/100) as totalAlcohol
-            FROM alcohol_event 
-            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId} AND (date BETWEEN '{startDate}' AND '{endDate}')
-            GROUP BY {groupBy}
-            ORDER BY {groupBy}
-            """)
-            row = cursor.fetchall()
-            return row
 
-    def preferedAlcoType(self, userId, startDate, endDate): 
-        '''oblicza jaki udzial procentowy po przeliczeniu na czysty spirytus ma dany typ alkocholu w podanym przedziale czasowym'''
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-            SELECT alcoholType,  SUM(volume * percentage/100) 
-            as alcoTypePercentage
-            FROM alcohol_event 
-            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-            GROUP BY alcoholType
-            """)
-            row = cursor.fetchall()
-            return row
-
-    def preferedEventType(self, userId, startDate, endDate): 
-        '''oblicza jaki udzial procentowy po przeliczeniu na czysty spirytus ma dany typ alkocholu w podanym przedziale czasowym'''
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-            SELECT eventName,  SUM(volume * percentage/100) 
-            as alcoTypePercentage
-            FROM alcohol_event 
-            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-            GROUP BY eventName
-            """)
-            row = cursor.fetchall()
-            return row
-
-    def avgAlcoholPercentage(self, userId, startDate, endDate):
-        '''oblicza sredni procent alkocholu wypitego w podanym przedziale czasowym'''
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-            SELECT AVG(percentage) as avgPercentage
-            FROM alcohol_event 
-            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-            """)
-            row = cursor.fetchall()
-            return row
-    
-    def totalAlcoholConsumption(self, userId, startDate, endDate):
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-                SELECT SUM(volume * percentage/100)  
-                FROM alcohol_event 
-                INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-                WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-            """)
-            row = cursor.fetchall()
-            return row
-
-    def drinkingHours(self, userId, startDate, endDate):
-        '''zwraca w jakich godzinach pijemy alkohol'''
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-            SELECT STRFTIME('%H', date) as timeOfDrinking, SUM(volume * percentage/100) as totalAlcohol
-            FROM alcohol_event 
-            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-            GROUP BY STRFTIME('%H', date) 
-            """)
-            row = cursor.fetchall()
-            return row
-    
-    def hangovers(self, userId, startDate, endDate): 
-        '''zwraca ilosc kacy'''
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-                SELECT h.hangoverType, COUNT(h.hangoverType)
-                FROM alcohol_hangover AS h
-                WHERE user_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-                GROUP BY h.hangoverType
-            """)
-            row = cursor.fetchall()
-            return row
  
 
         

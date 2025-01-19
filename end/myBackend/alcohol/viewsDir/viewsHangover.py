@@ -5,10 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from django.db import connection
 from rest_framework import status
-from alcohol.models import Hangover
+from alcohol.modelsDir.models import Hangover
 import datetime
 import pytz
-
+from alcohol.modelsDir.hangovers import getHangovers
 
 
 
@@ -28,7 +28,7 @@ class HangoverView(APIView):
 
     def get(self, request): 
         
-        hangovers = self.getHangovers(request.user.id)
+        hangovers = getHangovers(request.user.id)
         hangoversList = [{'id': row[0],'date': row[1], 'hangoverType': row[2]} for row in hangovers]
         return Response({
             'hangoversList': hangoversList
@@ -45,24 +45,6 @@ class HangoverView(APIView):
                 return Response({'error': 'Hangover not found or you are not authorized to delete it'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    def getHangovers(self, userId):
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-            SELECT
-                id, 
-                date, 
-                hangoverType
-            FROM alcohol_hangover
-            WHERE user_id = {userId}
-            ORDER BY date DESC
-            """)
-            row = cursor.fetchall()
-            return row
-
-
-
 
 
     

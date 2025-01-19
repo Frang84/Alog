@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from django.db import connection
 from rest_framework import status
-from alcohol.models import Alcohol, Event
+from alcohol.modelsDir.models import Alcohol, Event
+from alcohol.modelsDir.add import isTooMuch
 import datetime
 import pytz
 
@@ -61,7 +62,7 @@ class EventView(APIView):
                 alcohol = alcohol
             )
 
-            return Response({'message': f'{self.isTooMuch(request.user.id)}'}, status=status.HTTP_201_CREATED)
+            return Response({'message': f'{isTooMuch(request.user.id)}'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,26 +81,3 @@ class EventView(APIView):
             return datetime.datetime(year, month, day, 23,59,59)  
         return datetime.datetime(year, month, day, hour, minute)  
 
-    def totalAlcoholConsumption(self, userId, startDate, endDate):
-
-        with connection.cursor() as cursor:
-            cursor.execute(f"""
-                SELECT SUM(volume * percentage/100)  
-                FROM alcohol_event 
-                INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-                WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-            """)
-            row = cursor.fetchone()
-            return row
-
-    def isTooMuch(self, userId): 
-        
-        today = datetime.datetime.now()
-        startDate = today - datetime.timedelta(days=7)
-        print(today)
-        print(startDate)
-        alcoholConsumption = self.totalAlcoholConsumption(userId, startDate, today )
-        if alcoholConsumption[0] < 355.0: 
-            return 'alcohol created successfully'
-        else: 
-            return 'you drink too much'

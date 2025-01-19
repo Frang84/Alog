@@ -89,11 +89,8 @@
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     ```
     oddzielenie tworzenia i usuwania obiektu 
-6. MVC 
-    ```python
 
-    ```
-7. Identity field 
+6. Identity field 
     ```python
     class Challange(models.Model): 
         challangeTypeChoice = [
@@ -108,4 +105,33 @@
     ```
     do klasy automatycznie dołączne jest pole id
 
-8. 
+7. Domain Model
+
+    odseparowana logika dziedziny od reszty kodu. W strukturze plików folder modelsDir.
+
+8. Querry object 
+    ```python
+        def getChallanges( userId): 
+            with connection.cursor() as cursor:
+                cursor.execute(f"""
+                SELECT 
+                    alcohol_challange.startDate,
+                    alcohol_challange.endDate,
+                    alcohol_challange.chellangeType,
+                    IFNULL(SUM(alcohol_alcohol.volume * alcohol_alcohol.percentage / 100), 0) AS overallAlc,
+                    alcohol_challange.limitAlc AS limitOfAlcohol
+                FROM alcohol_challange
+                LEFT JOIN alcohol_event 
+                    ON alcohol_challange.user_id = alcohol_event.userId_id
+                    AND alcohol_event.date BETWEEN alcohol_challange.startDate AND alcohol_challange.endDate
+                LEFT JOIN alcohol_alcohol  
+                    ON alcohol_alcohol.id = alcohol_event.alcohol_id
+                WHERE 
+                    alcohol_challange.user_id = {userId}
+                GROUP BY alcohol_challange.id;
+                """)
+                row = cursor.fetchall()
+                return row
+    ```
+    pozwala na tworzenie kodu sql w zaleznosci od id użytkownika. 
+
