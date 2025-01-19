@@ -12,19 +12,18 @@ import pytz
 
 
 
+class Hangover:
 
-
-
-def getHangovers( userId):
-    with connection.cursor() as cursor:
-        cursor.execute(f"""
-        SELECT
-            id, 
-            date, 
-            hangoverType
-        FROM alcohol_hangover
-        WHERE user_id = {userId}
-        ORDER BY date DESC
-        """)
-        row = cursor.fetchall()
-        return row
+    def getHangovers(self, userId):
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+            SELECT
+                id, 
+                date, 
+                hangoverType
+            FROM alcohol_hangover
+            WHERE user_id = {userId}
+            ORDER BY date DESC
+            """)
+            row = cursor.fetchall()
+            return row

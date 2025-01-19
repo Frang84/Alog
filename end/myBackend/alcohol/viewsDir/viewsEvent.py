@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db import connection
 from rest_framework import status
 from alcohol.modelsDir.models import Alcohol, Event
-from alcohol.modelsDir.add import isTooMuch
+from alcohol.modelsDir.add import Add
 import datetime
 import pytz
 
@@ -36,6 +36,11 @@ class UserProfileView(APIView):
 class EventView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def __init__(self, **kwargs): 
+        super().__init__(**kwargs)
+        self.add = Add()
+
+    
     def post(self, request):
         # Używamy request.user, aby uzyskać informacje o zalogowanym użytkowniku
         try:
@@ -62,7 +67,7 @@ class EventView(APIView):
                 alcohol = alcohol
             )
 
-            return Response({'message': f'{isTooMuch(request.user.id)}'}, status=status.HTTP_201_CREATED)
+            return Response({'message': f'{self.add.isTooMuch(request.user.id)}'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

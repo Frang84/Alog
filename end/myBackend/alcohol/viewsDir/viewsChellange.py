@@ -6,13 +6,18 @@ from django.contrib.auth.models import User
 from django.db import connection
 from rest_framework import status
 from alcohol.modelsDir.models import Alcohol, Event, Challange
-from alcohol.modelsDir.challanges import getChallanges
+from alcohol.modelsDir.challanges import Challange
 import datetime
 import pytz
 
 
 class ChallangeView(APIView): 
-    ermission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+
+    def __init__(self, **kwargs): 
+        super().__init__(**kwargs)
+        self.challange = Challange()
+
     def post(self, request): 
         try: 
             userId = request.user.id 
@@ -28,7 +33,7 @@ class ChallangeView(APIView):
 
     def get(self, request): 
         
-        challanges = getChallanges(request.user.id)
+        challanges = self.challange.getChallanges(request.user.id)
         challangesList = [{'startDate': row[0], 'endDate':  row[1], 'challangeType':  row[2], 'overallAlc':  row[3], 'limit': row[4]} for row in challanges]
         return Response(
             {

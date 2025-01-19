@@ -8,13 +8,18 @@ from rest_framework import status
 from alcohol.modelsDir.models import Hangover
 import datetime
 import pytz
-from alcohol.modelsDir.hangovers import getHangovers
+from alcohol.modelsDir.hangovers import Hangover
 
 
 
 
 class HangoverView(APIView): 
-    ermission_classes = [IsAuthenticated]
+
+    def __init__(self, **kwargs): 
+        super().__init__(**kwargs)
+        self.hangover = Hangover()
+
+    permission_classes = [IsAuthenticated]
     def post(self, request): 
         try: 
             userId = request.user.id 
@@ -28,7 +33,7 @@ class HangoverView(APIView):
 
     def get(self, request): 
         
-        hangovers = getHangovers(request.user.id)
+        hangovers = self.hangover.getHangovers(request.user.id)
         hangoversList = [{'id': row[0],'date': row[1], 'hangoverType': row[2]} for row in hangovers]
         return Response({
             'hangoversList': hangoversList

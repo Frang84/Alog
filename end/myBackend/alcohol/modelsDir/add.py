@@ -11,26 +11,26 @@ import datetime
 import pytz
 
 
-def totalAlcoholConsumption(userId, startDate, endDate):
 
-    with connection.cursor() as cursor:
-        cursor.execute(f"""
-            SELECT SUM(volume * percentage/100)  
-            FROM alcohol_event 
-            INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
-            WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
-        """)
-        row = cursor.fetchone()
-        return row
+class Add: 
 
-def isTooMuch(userId): 
-    today = datetime.datetime.now()
-    startDate = today - datetime.timedelta(days=7)
-    print(today)
-    print(startDate)
-    alcoholConsumption = totalAlcoholConsumption(userId, startDate, today )
-    print(alcoholConsumption[0])
-    if alcoholConsumption[0] < 355.0: 
-        return 'alcohol created successfully'
-    else: 
-        return 'you drink too much'
+    def totalAlcoholConsumption(self, userId, startDate, endDate):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+                SELECT SUM(volume * percentage/100)  
+                FROM alcohol_event 
+                INNER JOIN alcohol_alcohol ON alcohol_event.alcohol_id = alcohol_alcohol.id
+                WHERE alcohol_event.userId_id = {userId} AND date BETWEEN '{startDate}' AND '{endDate}'
+            """)
+            row = cursor.fetchone()
+            return row
+
+    def isTooMuch(self, userId): 
+        today = datetime.datetime.now()
+        startDate = today - datetime.timedelta(days=7)
+        alcoholConsumption = self.totalAlcoholConsumption( userId, startDate, today ) 
+        if alcoholConsumption[0] < 355.0: 
+            return 'alcohol created successfully'
+        else: 
+            return 'you drink too much'

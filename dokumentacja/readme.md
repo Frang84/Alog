@@ -135,3 +135,5 @@
     ```
     pozwala na tworzenie kodu sql w zaleznosci od id użytkownika. 
 
+    
+
