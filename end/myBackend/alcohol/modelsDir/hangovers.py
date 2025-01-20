@@ -12,7 +12,7 @@ import pytz
 
 
 
-class Hangover:
+class HangoverProc:
 
     def getHangovers(self, userId):
         with connection.cursor() as cursor:

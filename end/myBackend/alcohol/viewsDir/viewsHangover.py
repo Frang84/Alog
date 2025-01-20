@@ -8,7 +8,7 @@ from rest_framework import status
 from alcohol.modelsDir.models import Hangover
 import datetime
 import pytz
-from alcohol.modelsDir.hangovers import Hangover
+from alcohol.modelsDir.hangovers import HangoverProc
 
 
 
@@ -17,16 +17,19 @@ class HangoverView(APIView):
 
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
-        self.hangover = Hangover()
+        self.hangover = HangoverProc()
 
     permission_classes = [IsAuthenticated]
     def post(self, request): 
         try: 
+            
             userId = request.user.id 
+            
             user = User.objects.all().filter(id = userId).first()
             date = self.getDate(request.data.get("date")) 
             hangoverType = request.data.get('hangoverType')
             Hangover.objects.create(user=user, date=date, hangoverType=hangoverType)
+            
             return Response({'message': 'Hangover created successfully'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return  Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -45,6 +45,7 @@ const CreateScreen = () =>{
         let accessToken = '';
         if (dateToken) {
             accessToken = JSON.parse(dateToken).token.access;
+            console.log(accessToken)
         } else {
             console.error("DateToken is null");
             return;

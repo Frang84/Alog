@@ -13,7 +13,7 @@ import pytz
 
 
 
-class Challange: 
+class ChallangeProc: 
 
 
     def getChallanges(self, userId): 

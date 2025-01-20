@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db import connection
 from rest_framework import status
 from alcohol.modelsDir.models import Alcohol, Event, Challange
-from alcohol.modelsDir.challanges import Challange
+from alcohol.modelsDir.challanges import ChallangeProc
 import datetime
 import pytz
 
@@ -16,7 +16,7 @@ class ChallangeView(APIView):
 
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
-        self.challange = Challange()
+        self.challange = ChallangeProc()
 
     def post(self, request): 
         try: 
