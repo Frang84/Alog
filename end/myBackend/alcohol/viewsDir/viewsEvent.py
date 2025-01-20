@@ -82,7 +82,9 @@ class EventView(APIView):
         hs = time.split(':')
         hour = int(hs[0])
         minute = int(hs[1])
+        result = datetime.datetime(year, month, day, hour, minute)  
+        print(result)
         if opt == 'e': 
             return datetime.datetime(year, month, day, 23,59,59)  
-        return datetime.datetime(year, month, day, hour, minute)  
+        return result 
 

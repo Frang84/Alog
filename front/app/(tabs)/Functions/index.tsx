@@ -159,8 +159,7 @@ const  StatsPage = () =>{
       const accessToken = JSON.parse(dateToken).token.access;
       try {
         const data = await apiPostRequest(url, payload, accessToken);
-        console.log("Success", `user loggedin:`, data);
-        console.log("timeSpan: ", timeSpan);
+
 
         setPreferAlcoTypeStats(processPreferAlcoholStats(data["preferAlcoTypeStats"]));
         let avgAlcPer = (data["avgAlcoholPercentageStats"] !== null) ? data["avgAlcoholPercentageStats"].toString().substring(0,5) : '0.0';

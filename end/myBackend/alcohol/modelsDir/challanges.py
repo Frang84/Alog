@@ -17,6 +17,7 @@ class ChallangeProc:
 
 
     def getChallanges(self, userId): 
+        '''Wybieramy challange '''
         with connection.cursor() as cursor:
             cursor.execute(f"""
             SELECT 
@@ -24,7 +25,8 @@ class ChallangeProc:
                 alcohol_challange.endDate,
                 alcohol_challange.chellangeType,
                 IFNULL(SUM(alcohol_alcohol.volume * alcohol_alcohol.percentage / 100), 0) AS overallAlc,
-                alcohol_challange.limitAlc AS limitOfAlcohol
+                alcohol_challange.limitAlc AS limitOfAlcohol,
+                IFNULL(COUNT(alcohol_event.id), 0) AS drinkCount
             FROM alcohol_challange
             LEFT JOIN alcohol_event 
                 ON alcohol_challange.user_id = alcohol_event.userId_id

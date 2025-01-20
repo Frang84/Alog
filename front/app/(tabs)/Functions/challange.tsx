@@ -33,29 +33,40 @@ const ChallangeScreen = () =>{
           }
         }
       }
-    const statusOfChallange = (startDate: Date, endDate: Date, limit: number, overallAlc: number) => {
+    const statusOfChallange = (item: challangeItem) => {
       const today = new Date()
-      if(limit < overallAlc){
+      if(item.limit < item.overallAlc && item.challangeType === "Limit"){
         return "failed";
       }
-       if(new Date(endDate) > today && new Date(startDate) < today){
+      if(item.limit < item.drinkCount && item.challangeType === "Alone")
+       if(new Date(item.endDate) > today && new Date(item.startDate) < today){
         return "in progress";
       }
-       if(new Date(startDate) > today){
+       if(new Date(item.startDate) > today){
         return 'start in future';
       }
       else{ 
         return "succeeded";
       }
     } 
+    const howMuchAlready = (item: challangeItem) => {
+      if(item.challangeType === "Alone"){
+        const result = `you drinked ${item.drinkCount} times alone already`;
+        return result; 
+      }
+      else{ 
+        const result = `you drinked ${item.overallAlc} ml of 100% alcohol already`;
+        return result;
+      }
+    }
     return(
         
             <View style={customStyleChellange.container}>
-                <MyButton  onPressFun={() => router.navigate('/extraScreens/createChellange')} textToPrint='new chellange' />
+                <MyButton  onPressFun={() => router.navigate('/extraScreens/createChellange')} textToPrint='new challange' />
                 <FlatList
                 data={challangesList}
                 renderItem={({item}) => {
-                    
+                    console.log(item);
                     return(
                         <View style={customeStyle.noteOuter}>
                             <View style={customeStyle.note}>
@@ -63,8 +74,8 @@ const ChallangeScreen = () =>{
                                 <Text>start Date: {formatDate(new Date(item.startDate))}</Text>
                                 <Text>end Date: {formatDate(new Date(item.endDate))}</Text>
                                 <Text>limit : {item.limit} {(item.challangeType === 'Alone') ? "(times)" : "(ml of 100% alcohol)"}</Text>
-                                <Text>how much you drinked already: {item.overallAlc} (ml of 100% alcohol)</Text>  
-                                <Text>Status: {statusOfChallange(item.startDate, item.endDate, item.limit, item.overallAlc)}</Text>
+                                <Text>{howMuchAlready(item)}</Text>  
+                                <Text>Status: {statusOfChallange(item)}</Text>
                             </View>
                         </View>
                     );

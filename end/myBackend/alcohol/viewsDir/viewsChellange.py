@@ -35,7 +35,7 @@ class ChallangeView(APIView):
     def get(self, request): 
         
         challanges = self.challange.getChallanges(request.user.id)
-        challangesList = [{'startDate': row[0], 'endDate':  row[1], 'challangeType':  row[2], 'overallAlc':  row[3], 'limit': row[4]} for row in challanges]
+        challangesList = [{'startDate': row[0], 'endDate':  row[1], 'challangeType':  row[2], 'overallAlc':  row[3], 'limit': row[4], 'drinkCount': row[5]} for row in challanges]
         return Response(
             {
             'challangesList': challangesList

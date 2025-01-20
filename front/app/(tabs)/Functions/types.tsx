@@ -9,7 +9,9 @@ export interface challangeItem{
   startDate: Date;
   endDate: Date;
   overallAlc: number;
+  drinkCount: number;
   limit: number;
+
 }
 
 export interface hangoverItem{

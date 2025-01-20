@@ -11,7 +11,7 @@ export const processTotalAlcoholStats = (data: {period: string, totalAlcohol: nu
         idx = parseInt(item.period);
       }
       else if(opt === 'w'){
-      idx = new Date(item.period ).getDay();  
+      idx = new Date(item.period).getDay();  
       if(25.35 < item.totalAlcohol){
         barData[idx].frontColor = '#bf212f';
       }  

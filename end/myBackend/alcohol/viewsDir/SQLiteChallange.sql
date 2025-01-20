@@ -38,4 +38,19 @@ WHERE user_id = 1 AND date BETWEEN "2025-01-08 17:32:26.866293" AND "2025-01-15 
 GROUP BY h.hangoverType
 
 
-
+ SELECT 
+    alcohol_challange.startDate,
+    alcohol_challange.endDate,
+    alcohol_challange.chellangeType,
+    IFNULL(SUM(alcohol_alcohol.volume * alcohol_alcohol.percentage / 100), 0) AS overallAlc,
+    IFNULL(COUNT(alcohol_event.id), 0) AS drinkCount,
+    alcohol_challange.limitAlc AS limitOfAlcohol
+FROM alcohol_challange
+LEFT JOIN alcohol_event 
+    ON alcohol_challange.user_id = alcohol_event.userId_id
+    AND alcohol_event.date BETWEEN alcohol_challange.startDate AND alcohol_challange.endDate
+LEFT JOIN alcohol_alcohol  
+    ON alcohol_alcohol.id = alcohol_event.alcohol_id
+WHERE 
+    alcohol_challange.user_id = 1
+GROUP BY alcohol_challange.id;
