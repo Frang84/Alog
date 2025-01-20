@@ -17,6 +17,7 @@ class ChallangeView(APIView):
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
         self.challange = ChallangeProc()
+        
 
     def post(self, request): 
         try: 
