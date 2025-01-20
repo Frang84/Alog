@@ -11,7 +11,11 @@ export const processTotalAlcoholStats = (data: {period: string, totalAlcohol: nu
         idx = parseInt(item.period);
       }
       else if(opt === 'w'){
-      idx = new Date(item.period).getDay();  
+        const [day, month, year] = item.period.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        console.log(date)
+        idx = date.getDay();
+        console.log(idx) 
       if(25.35 < item.totalAlcohol){
         barData[idx].frontColor = '#bf212f';
       }  
@@ -35,15 +39,20 @@ export const processTotalAlcoholStats = (data: {period: string, totalAlcohol: nu
       frontColor: '#006f3c',
       value: 0,
     }));
-    
+    console.log(data)
     data.forEach((item) => {
       let idx = 0;
+      console.log(item)
       if (opt === 'd'){
         idx = parseInt(item.period);
       }
       if(opt == 'w'){
-        idx = new Date(item.period ).getDay();
-
+       // const date = new Date(item.period );
+        const [day, month, year] = item.period.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        console.log(date)
+        idx = date.getDay();
+        console.log(idx)
       }
       else if(opt == 'm'){
         idx = parseInt(item.period) - 1;
