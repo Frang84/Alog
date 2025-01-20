@@ -44,7 +44,7 @@
     ```
 4. Transaction Script 
     ```python
-            def totalAlcoholPrice(self, userId, groupBy, startDate, endDate): 
+     def totalAlcoholPrice(self, userId, groupBy, startDate, endDate): 
         '''funckaj wylicza calkowity alkohol i cene dla kazdego dnia w podanym przedziale czasowym'''
         with connection.cursor() as cursor:
             cursor.execute(f"""
@@ -134,6 +134,17 @@
                 return row
     ```
     pozwala na tworzenie kodu sql w zaleznosci od id użytkownika. 
+
+9. Layer Supertype 
+
+    każda klasa w warstwie view dziedziczy po klasie APIView
+    
+10. Client Session State 
+    
+    JWT, tokeny które przechowywane są po stronie klienta 
+
+11. Data Transfer Object 
+    tokeny JWT. Przenoszone są w określony formacie (JSON). Format tokenów jest sprecyzowany, oraz payload tokenów można rozszerzać za pomocą serializerów. 
 
     
 
