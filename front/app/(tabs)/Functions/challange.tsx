@@ -38,7 +38,9 @@ const ChallangeScreen = () =>{
       if(item.limit < item.overallAlc && item.challangeType === "Limit"){
         return "failed";
       }
-      if(item.limit < item.drinkCount && item.challangeType === "Alone")
+      if(item.limit < item.drinkCount && item.challangeType === "Alone"){
+        return "failed";
+      }
        if(new Date(item.endDate) > today && new Date(item.startDate) < today){
         return "in progress";
       }
